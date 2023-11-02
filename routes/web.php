@@ -27,7 +27,7 @@ Route::controller('\App\Http\Controllers\AccountController')->prefix('account')-
         Route::get('/dashboard', 'dashboard')->name('dashboard');
         Route::get('/edit', 'edit')->name('edit');
         Route::get('/delete', 'delete')->name('delete');
-        
+
         // Post routes
         Route::post('/login', 'loginPost');
         Route::post('/register', 'registerPost');
@@ -52,5 +52,12 @@ Route::controller('\App\Http\Controllers\PostController')->prefix('post')->name(
     function() {
         Route::get('/{post_id}/replies', 'replies');
         Route::get('/{post_id}/replies/{page}', 'repliesPaged');
+    }
+);
+
+Route::controller('\App\Http\Controllers\AboutController')->prefix('about')->name('about.')->group(
+    function() {
+        Route::get('/', 'index');
+        Route::get('/parento', 'parento')->name('parento');
     }
 );
