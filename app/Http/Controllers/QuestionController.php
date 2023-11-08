@@ -27,6 +27,15 @@ class QuestionController extends Controller
     }
 
     /**
+     * Display a list of replies for a specific question, 10 per page
+     */
+    public function replies(int $id, int $page) {
+        $posts = Question::find($id)->posts()->offset($page * 10)->limit(10)->get();
+
+        return response()->json(json_encode($posts));
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()

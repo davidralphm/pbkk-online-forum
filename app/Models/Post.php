@@ -14,12 +14,4 @@ class Post extends Model
     public function question() : BelongsTo {
         return $this->belongsTo(Question::class);
     }
-
-    public function parentPost() : BelongsTo {
-        return $this->belongsTo(Post::class, 'parent_post_id');
-    }
-
-    public function childPosts() : HasMany {
-        return $this->hasMany(Post::class, 'parent_post_id');
-    }
 }

@@ -44,6 +44,8 @@ Route::controller('\App\Http\Controllers\QuestionController')->prefix('question'
         Route::get('/index', 'index');
 
         Route::get('/page/{page}', 'page');
+
+        Route::get('/{id}/replies/{page}', 'replies');
     }
 );
 
