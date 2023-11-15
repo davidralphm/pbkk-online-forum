@@ -16,9 +16,11 @@
         <b>{{ Session::get('message-success') }}</b>
     @endif
 
-    @foreach ($user as $key => $value)
-        <b>{{ $key }}</b>
-    @endforeach
+    <b>Name : {{ $user->name }}</b><br><hr>
+    <b>Email : {{ $user->email }}</b><br><hr>
+    <b>Role : {{ $user->role }}</b><br><hr>
+    <b>About : {{ $user->about }}</b><br><hr>
+    <b>Image URL : {{ $user->image_url }}</b><br><hr>
 
     <form action="/logout" method="post">
         {{ csrf_field() }}
