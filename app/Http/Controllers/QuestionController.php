@@ -3,83 +3,82 @@
 namespace App\Http\Controllers;
 
 use App\Models\Question;
+use App\Models\Reply;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class QuestionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $questions = Question::limit(32)->get();
+    // Return home page
+    public function index() {
 
-        return response()->json(json_encode($questions));
     }
 
-    /**
-     * Display a listing of the questions, 10 per page
-     */
-    public function page(int $page) {
-        $questions = Question::offset($page * 10)->limit(10)->get();
-
-        return response()->json(json_encode($questions));
+    // Show create question page
+    public function create() {
+        return view('question.create');
     }
 
-    /**
-     * Display a list of replies for a specific question, 10 per page
-     */
-    public function replies(int $id, int $page) {
-        $posts = Question::find($id)->posts()->offset($page * 10)->limit(10)->get();
+    // Store new question
+    public function createPost(Request $request) {
+        $validated = $request->validate(
+            [
+                'title' => 'required',
+                'body' => 'required'
+            ],
 
-        return response()->json(json_encode($posts));
+            [
+                'title.required' => 'Harap isikan judul pertanyaan',
+                'body.required' => 'Harap isikan teks pertanyaan',
+            ]
+        );
+
+        $question = new Question;
+
+        $question->user_id = Auth::id();
+        $question->title = $request->title;
+
+        $question->save();
+
+        // Create first reply (the body of the question)
+        $reply = new Reply;
+
+        $reply->user_id = $question->user_id;
+        $reply->question_id = $question->id;
+        $reply->body = $request->body;
+
+        $reply->save();
+
+        Session::flash('message-success', 'Question successfully created!');
+        return redirect('/question/view/' . $question->id);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+    // Show the first page of a question
+    public function view(int $id) {
+        $question = Question::find($id);
+
+        if (empty($question)) {
+            Session::flash('message-error', 'Question does not exist!');
+            return redirect('/');
+        }
+
+        $replies = $question->replies()->limit(20)->get();
+
+        return view('question.view', ['question' => $question, 'replies' => $replies]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+    // Show a specific page of a question
+    public function viewPage(int $id, int $page) {
+        $question = Question::find($id);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Question $question)
-    {
-        //
-    }
+        if (empty($question)) {
+            Session::flash('message-error', 'Question does not exist!');
+            return redirect('/');
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Question $question)
-    {
-        //
-    }
+        $replies = $question->replies()->offset($page * 20)->limit(20)->get();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Question $question)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Question $question)
-    {
-        //
+        return view('question.view', ['question' => $question, 'replies' => $replies]);
     }
 }

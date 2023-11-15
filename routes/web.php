@@ -50,3 +50,17 @@ Route::prefix('/user')->name('user.')->group(
         Route::get('/deleteImage', ['\App\Http\Controllers\UserController', 'deleteImage'])->middleware('auth');
     }
 );
+
+// Question routes
+Route::prefix('/question')->name('question.')->group(
+    function() {
+        // Create question page
+        Route::get('/create', ['\App\Http\Controllers\QuestionController', 'create'])->middleware('auth');
+
+        // Create question post
+        Route::post('/create', ['\App\Http\Controllers\QuestionController', 'createPost'])->middleware('auth');
+
+        // Show question page
+        Route::get('/view/{id}', ['\App\Http\Controllers\QuestionController', 'view']);
+    }
+);
