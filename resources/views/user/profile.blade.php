@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+    <title>{{ $user->name }}'s Profile</title>
 </head>
 <body>
     @if ($errors->any())
@@ -16,13 +16,10 @@
         <b>{{ Session::get('message-success') }}</b>
     @endif
 
-    <form action="/login" method="post">
-        {{ csrf_field() }}
-
-        <input type="email" name="email" id="email" placeholder="email" value="{{ old('email') }}">
-        <input type="password" name="password" id="password" placeholder="password">
-
-        <input type="submit" value="Login">
-    </form>
+    <b>Name : {{ $user->name }}</b><br><hr>
+    <b>Email : {{ $user->email }}</b><br><hr>
+    <b>Role : {{ $user->role }}</b><br><hr>
+    <b>About : {{ $user->about }}</b><br><hr>
+    <b>Image URL : {{ $user->image_url }}</b><br><hr>
 </body>
 </html>

@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
+use function PHPUnit\Framework\isEmpty;
+
 class UserController extends Controller
 {
     // Return template register (GET method)
@@ -73,15 +75,11 @@ class UserController extends Controller
         if (Auth::attempt($validated)) {
             $request->session()->regenerate();
 
-            return redirect()->intended('/dashboard');
+            return redirect()->intended('/user/dashboard');
         }
 
         // Jika authentication tidak berhasil
-        return back()->withErrors(
-            [
-                'email' => 'Email tidak ditemukan'
-            ]
-        )->onlyInput('email');
+        return back()->withErrors('Email tidak ditemukan atau password salah')->onlyInput('email');
     }
 
     // Logout
@@ -94,8 +92,107 @@ class UserController extends Controller
         return redirect('/login');
     }
 
+    // View user profile
+    public function profile(int $id) {
+        $user = User::find($id);
+
+        if ($user == null) {
+            Session::flash('message-error', 'User tidak ditemukan');
+
+            return redirect('/user/dashboard');
+        }
+
+        return view('user.profile', ['user' => $user]);
+    }
+
     // Return dashboard view
     public function dashboard() {
         return view('user.dashboard', ['user' => Auth::user()]);
+    }
+
+    // Edit account
+    public function edit(Request $request) {
+        $validated = $request->validate(
+            [
+                'name' => 'required|ascii',
+                'about' => 'ascii',
+                'image' => 'image|max:2048',
+            ],
+
+            [
+                'name.required' => 'Harap isikan nama lengkap Anda',
+                'name.ascii' => 'Nama lengkap Anda hanya boleh menggunakan karakter ASCII',
+
+                'about.ascii' => 'About hanya boleh menggunakan karakter ASCII',
+
+                'image.image' => 'Format file yang diizinkan hanya jpg, jpeg, png, bmp, gif, svg, dan webp',
+                'image.max' => 'Ukuran file maksimum adalah 2MB'
+            ]
+        );
+
+        // Update user
+        $user = $request->user();
+
+        $user->name = $request->name;
+        $user->about = $request->about;
+
+        // Upload gambar jika ada
+        if (!empty($request->image)) {
+            Session::flash('message-success', 'Gambar berhasil diupload!');
+        }
+
+        $user->save();
+
+        return redirect('/user/dashboard');
+    }
+
+    // Change password
+    public function changePassword(Request $request) {
+        $validated = $request->validate(
+            [
+                'password' => 'required|current_password',
+                'new_password' => 'required|confirmed',
+            ],
+
+            [
+                'password.required' => 'Harap isikan password lama Anda',
+                'password.current_password' => 'Password yang Anda isikan salah',
+
+                'new_password.required' => 'Harap isikan password baru Anda',
+                'new_password.confirmed' => 'Harap konfirmasikan password baru Anda dengan benar',
+            ]
+        );
+
+        // Update user
+        $user = $request->user();
+        $user->password = bcrypt($request->new_password);
+        $user->save();
+
+        Session::flash('message-success', 'Password berhasil diubah!');
+        return redirect('/user/dashboard');
+    }
+
+    // Delete account
+    public function delete(Request $request) {
+        $validated = $request->validate(
+            [
+                'password' => 'required|current_password',
+            ],
+
+            [
+                'password.required' => 'Harap isikan password Anda',
+                'password.current_password' => 'Password yang Anda isikan salah',
+            ]
+        );
+
+        $user = $request->user();
+
+        // Logout user
+        Auth::logout();
+
+        $user->delete();
+
+        Session::flash('message-success', 'Akun berhasil dihapus');
+        return redirect('/logout');
     }
 }
