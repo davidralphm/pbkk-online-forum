@@ -17,20 +17,49 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Register route
-Route::get('/register', ['\App\Http\Controllers\UserController', 'register'])->name('register');
-Route::post('/register', ['\App\Http\Controllers\UserController', 'registerPost']);
-
-// Login route
-Route::get('/login', ['\App\Http\Controllers\UserController', 'login'])->name('login');
-Route::post('/login', ['\App\Http\Controllers\UserController', 'loginPost']);
-
-// Logout route
-Route::post('/logout', ['\App\Http\Controllers\UserController', 'logout']);
-
-// User routes
-Route::prefix('/user')->name('user.')->group(
+// Account controller
+Route::controller('\App\Http\Controllers\AccountController')->prefix('account')->name('account.')->group(
     function() {
-        Route::get('dashboard', ['\App\Http\Controllers\UserController', 'dashboard'])->name('dashboard')->middleware('auth');
+        // Get routes
+        Route::get('/', 'index')->name('index');
+        Route::get('/login', 'login')->name('login');
+        Route::get('/register', 'register')->name('register');
+        Route::get('/dashboard', 'dashboard')->name('dashboard');
+        Route::get('/edit', 'edit')->name('edit');
+        Route::get('/delete', 'delete')->name('delete');
+
+        // Post routes
+        Route::post('/login', 'loginPost');
+        Route::post('/register', 'registerPost');
+        Route::post('/logout', 'logout');
+        Route::post('/edit', 'editPost');
+        Route::post('/delete', 'deletePost');
+    }
+);
+
+// Question controller
+Route::controller('\App\Http\Controllers\QuestionController')->prefix('question')->name('question.')->group(
+    function() {
+        Route::get('/', 'index');
+        Route::get('/index', 'index');
+
+        Route::get('/page/{page}', 'page');
+
+        Route::get('/{id}/replies/{page}', 'replies');
+    }
+);
+
+// Post controller
+Route::controller('\App\Http\Controllers\PostController')->prefix('post')->name('post.')->group(
+    function() {
+        Route::get('/{post_id}/replies', 'replies');
+        Route::get('/{post_id}/replies/{page}', 'repliesPaged');
+    }
+);
+
+Route::controller('\App\Http\Controllers\AboutController')->prefix('about')->name('about.')->group(
+    function() {
+        Route::get('/', 'index');
+        Route::get('/parento', 'parento')->name('parento');
     }
 );
