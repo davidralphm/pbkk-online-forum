@@ -21,5 +21,10 @@
     <b>Role : {{ $user->role }}</b><br><hr>
     <b>About : {{ $user->about }}</b><br><hr>
     <b>Image URL : {{ $user->image_url }}</b><br><hr>
+
+    @if (!empty($user->image_url) && $user->image_url !== '')
+        <h3>Profile Image</h3>
+        <img src="/storage/uploads/{{ $user->image_url }}" alt="Profile Image"><br><br>
+    @endif
 </body>
 </html>

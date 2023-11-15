@@ -35,15 +35,18 @@ Route::prefix('/user')->name('user.')->group(
         Route::get('dashboard', ['\App\Http\Controllers\UserController', 'dashboard'])->name('dashboard')->middleware('auth');
 
         // View profile
-        Route::get('/{id}', ['\App\Http\Controllers\UserController', 'profile'])->name('profile');
+        Route::get('/profile/{id}', ['\App\Http\Controllers\UserController', 'profile'])->name('profile');
 
         // Edit account
-        Route::post('/editAccount', ['\App\Http\Controllers\UserController', 'edit']);
+        Route::post('/editAccount', ['\App\Http\Controllers\UserController', 'edit'])->middleware('auth');
 
         // Change password
-        Route::post('/changePassword', ['\App\Http\Controllers\UserController', 'changePassword']);
+        Route::post('/changePassword', ['\App\Http\Controllers\UserController', 'changePassword'])->middleware('auth');
 
         // Delete account
-        Route::post('/deleteAccount', ['\App\Http\Controllers\UserController', 'delete']);
+        Route::post('/deleteAccount', ['\App\Http\Controllers\UserController', 'delete'])->middleware('auth');
+
+        // Delete profile image
+        Route::get('/deleteImage', ['\App\Http\Controllers\UserController', 'deleteImage'])->middleware('auth');
     }
 );

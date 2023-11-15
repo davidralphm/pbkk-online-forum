@@ -138,7 +138,16 @@ class UserController extends Controller
 
         // Upload gambar jika ada
         if (!empty($request->image)) {
-            Session::flash('message-success', 'Gambar berhasil diupload!');
+            $filename = time() . '.' . $request->image->extension();
+            $request->image->move(public_path('storage/uploads'), $filename);
+
+            // Jika user sudah punya profile image, hapus profile image lama
+            if (!empty($user->image_url) && $user->image_url !== '') {
+                unlink(public_path('storage/uploads/' . $user->image_url));
+            }
+
+            // Update image url user
+            $user->image_url = $filename;
         }
 
         $user->save();
@@ -194,5 +203,22 @@ class UserController extends Controller
 
         Session::flash('message-success', 'Akun berhasil dihapus');
         return redirect('/logout');
+    }
+
+    // Delete profile image
+    public function deleteImage(Request $request) {
+        $user = $request->user();
+
+        // Jika user sudah punya profile image, hapus profile image lama
+        if (!empty($user->image_url) && $user->image_url !== '') {
+            unlink(public_path('storage/uploads/' . $user->image_url));
+        }
+
+        // Update image url user
+        $user->image_url = '';
+        $user->save();
+
+        Session::flash('message-success', 'Gambar profile berhasil dihapus!');
+        return redirect('/user/dashboard');
     }
 }

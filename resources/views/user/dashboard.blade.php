@@ -22,6 +22,13 @@
     <b>About : {{ $user->about }}</b><br><hr>
     <b>Image URL : {{ $user->image_url }}</b><br><hr>
 
+    @if (!empty($user->image_url) && $user->image_url !== '')
+        <h3>Profile Image</h3>
+        <img src="/storage/uploads/{{ $user->image_url }}" alt="Profile Image"><br><br>
+
+        <a href="/user/deleteImage">Delete profile image</a>
+    @endif
+
     <h2>Edit Account</h2>
 
     <form action="/user/editAccount" method="post" enctype="multipart/form-data">
