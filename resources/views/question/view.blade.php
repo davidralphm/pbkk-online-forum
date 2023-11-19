@@ -17,12 +17,29 @@
     @endif
 
     <h1>{{ $question->title }}</h1>
-    <h4>Posted on {{ $question->created_at }} by {{ $question->user->name }}</h4>
+
+    @if ($question->user != null)
+        <h4>Posted on {{ $question->created_at }} by {{ $question->user->name }}</h4>
+    @else
+        <h4>Posted on {{ $question->created_at }} by [Deleted User]</h4>
+    @endif
+
+    @if ($question->created_at != $question->updated_at)
+        <h5>Edited on {{ $question->updated_at }}</h5>
+    @endif
 
     <hr>
 
     @foreach ($replies as $key => $value)
-        <h4>{{ $value->user->name }} wrote on {{ $value->created_at }}</h4>
+        @if ($value->user != null)
+            <h4>{{ $value->user->name }} wrote on {{ $value->created_at }}</h4>
+        @else
+            <h4>[Deleted User] wrote on {{ $value->created_at }}</h4>
+        @endif
+
+        @if ($value->created_at != $value->updated_at)
+            <h5>Edited on {{ $value->updated_at }}</h5>
+        @endif
 
         <p>
             {{ $value->body }}

@@ -39,7 +39,7 @@ class UserController extends Controller
         );
 
         // Check if user already exists
-        if (!empty(User::where('email', '=', $request->email))) {
+        if (User::where('email', $request->email)->first() != null) {
             return back()->withErrors('Email is already in use!');
         }
 
