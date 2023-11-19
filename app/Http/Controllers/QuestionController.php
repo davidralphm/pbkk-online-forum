@@ -81,4 +81,30 @@ class QuestionController extends Controller
 
         return view('question.view', ['question' => $question, 'replies' => $replies]);
     }
+
+    // Reply to a question
+    public function reply(Request $request, int $id) {
+        $question = Question::find($id);
+
+        if (empty($question)) {
+            Session::flash('message-error', 'Question does not exist!');
+            return redirect('/');
+        }
+
+        $validated = $request->validate(
+            [ 'body' => 'required' ],
+            [ 'body.required' => 'Harap isikan teks pertanyaan',]
+        );
+
+        $reply = new Reply;
+
+        $reply->user_id = Auth::id();
+        $reply->question_id = $id;
+        $reply->body = $request->body;
+
+        $reply->save();
+
+        Session::flash('message-success', 'Reply posted successfully!');
+        return back();
+    }
 }

@@ -62,5 +62,8 @@ Route::prefix('/question')->name('question.')->group(
 
         // Show question page
         Route::get('/view/{id}', ['\App\Http\Controllers\QuestionController', 'view']);
+
+        // Reply to question
+        Route::post('/reply/{id}', ['\App\Http\Controllers\QuestionController', 'reply'])->middleware('auth');
     }
 );
