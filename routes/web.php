@@ -65,5 +65,22 @@ Route::prefix('/question')->name('question.')->group(
 
         // Reply to question
         Route::post('/reply/{id}', ['\App\Http\Controllers\QuestionController', 'reply'])->middleware('auth');
+
+        // Edit question
+        Route::get('/edit/{id}', ['\App\Http\Controllers\QuestionController', 'edit'])->middleware('auth');
+
+        // Edit question post
+        Route::post('/edit/{id}', ['\App\Http\Controllers\QuestionController', 'editPost'])->middleware('auth');
+    }
+);
+
+// Reply routes
+Route::prefix('/reply')->name('reply.')->group(
+    function() {
+        // Edit reply page
+        Route::get('/edit/{id}', ['\App\Http\Controllers\ReplyController', 'edit'])->middleware('auth');
+
+        // Edit reply post
+        Route::post('/edit/{id}', ['\App\Http\Controllers\ReplyController', 'editPost'])->middleware('auth');
     }
 );

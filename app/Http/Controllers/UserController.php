@@ -38,6 +38,11 @@ class UserController extends Controller
             ]
         );
 
+        // Check if user already exists
+        if (!empty(User::where('email', '=', $request->email))) {
+            return back()->withErrors('Email is already in use!');
+        }
+
         $user = new User;
 
         $user->name = $request->name;
@@ -97,9 +102,7 @@ class UserController extends Controller
         $user = User::find($id);
 
         if ($user == null) {
-            Session::flash('message-error', 'User tidak ditemukan');
-
-            return redirect('/user/dashboard');
+            return redirect('/user/dashboard')->withErrors('User not found!');
         }
 
         return view('user.profile', ['user' => $user]);

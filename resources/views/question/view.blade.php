@@ -22,11 +22,15 @@
     <hr>
 
     @foreach ($replies as $key => $value)
-        <h4>{{ $value->user->name }} wrote</h4>
+        <h4>{{ $value->user->name }} wrote on {{ $value->created_at }}</h4>
 
         <p>
             {{ $value->body }}
         </p>
+
+        @if (Auth::id() == $value->user_id)
+            <a href="/reply/edit/{{$value->id}}">Edit</a>
+        @endif
 
         <hr>
     @endforeach

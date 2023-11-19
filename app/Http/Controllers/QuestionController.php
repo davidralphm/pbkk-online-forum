@@ -59,8 +59,7 @@ class QuestionController extends Controller
         $question = Question::find($id);
 
         if (empty($question)) {
-            Session::flash('message-error', 'Question does not exist!');
-            return redirect('/');
+            return back()->withErrors('Question not found!');
         }
 
         $replies = $question->replies()->limit(20)->get();
@@ -73,8 +72,7 @@ class QuestionController extends Controller
         $question = Question::find($id);
 
         if (empty($question)) {
-            Session::flash('message-error', 'Question does not exist!');
-            return redirect('/');
+            return back()->withErrors('Question not found!');
         }
 
         $replies = $question->replies()->offset($page * 20)->limit(20)->get();
@@ -87,8 +85,7 @@ class QuestionController extends Controller
         $question = Question::find($id);
 
         if (empty($question)) {
-            Session::flash('message-error', 'Question does not exist!');
-            return redirect('/');
+            return back()->withErrors('Question not found!');
         }
 
         $validated = $request->validate(
@@ -105,6 +102,37 @@ class QuestionController extends Controller
         $reply->save();
 
         Session::flash('message-success', 'Reply posted successfully!');
+        return back();
+    }
+
+    // Return edit question view
+    public function edit($id) {
+        $question = Question::find($id);
+
+        if (empty($question)) {
+            return back()->withErrors('Question not found!');
+        }
+
+        return view('question.edit', ['question' => $question]);
+    }
+
+    // Edit question post
+    public function editPost(Request $request, int $id) {
+        $question = Question::find($id);
+
+        if (empty($question)) {
+            return back()->withErrors('Question not found!');
+        }
+
+        $validated = $request->validate(
+            ['title' => 'required'],
+            ['title.required' => 'Harap isikan judul pertanyaan']
+        );
+
+        $question->title = $request->title;
+        $question->save();
+
+        Session::flash('message-success', 'Question edited successfully!');
         return back();
     }
 }
