@@ -41,12 +41,22 @@
             <h5>Edited on {{ $value->updated_at }}</h5>
         @endif
 
-        <p>
-            {{ $value->body }}
-        </p>
+        @if ($value->deleted == false)
+            <p>
+                {{ $value->body }}
+            </p>
 
-        @if (Auth::id() == $value->user_id)
-            <a href="/reply/edit/{{$value->id}}">Edit</a>
+            @if (Auth::id() == $value->user_id)
+                <a href="/reply/edit/{{ $value->id }}">Edit</a>
+
+                <form action="/reply/delete/{{ $value->id }}" method="post">
+                    {{ csrf_field() }}
+
+                    <input type="submit" value="Delete Reply">
+                </form>
+            @endif
+        @else
+            <em>This reply was deleted</em>
         @endif
 
         <hr>

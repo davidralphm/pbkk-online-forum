@@ -38,4 +38,20 @@ class ReplyController extends Controller
         Session::flash('message-success', 'Reply edited successfully!');
         return redirect('/question/view/' . $reply->question_id);
     }
+
+    // Delete reply function
+    public function delete(Request $request, int $id) {
+        $reply = Reply::find($id);
+
+        if (empty($reply)) {
+            return back()->withErrors('Reply not found!');
+        }
+
+        // Set deleted flag to true
+        $reply->deleted = true;
+        $reply->save();
+
+        Session::flash('message-success', 'Reply deleted successfully!');
+        return back();
+    }
 }

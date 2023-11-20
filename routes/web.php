@@ -33,7 +33,7 @@ Route::prefix('/user')->name('user.')->group(
     function() {
         // Dashboard
         Route::get('dashboard', ['\App\Http\Controllers\UserController', 'dashboard'])->name('dashboard')->middleware('auth');
-
+        
         // View profile
         Route::get('/profile/{id}', ['\App\Http\Controllers\UserController', 'profile'])->name('profile');
 
@@ -82,5 +82,8 @@ Route::prefix('/reply')->name('reply.')->group(
 
         // Edit reply post
         Route::post('/edit/{id}', ['\App\Http\Controllers\ReplyController', 'editPost'])->middleware('auth');
+
+        // Delete reply
+        Route::post('/delete/{id}', ['\App\Http\Controllers\ReplyController', 'delete'])->middleware('auth');
     }
 );
