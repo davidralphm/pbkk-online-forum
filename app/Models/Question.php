@@ -26,6 +26,6 @@ class Question extends Model
 
     // Return body dari question
     public function firstReply() : HasOne {
-        return $this->hasOne(Reply::class);
+        return $this->hasOne(Reply::class)->oldestOfMany();
     }
 }

@@ -88,5 +88,14 @@ Route::prefix('/reply')->name('reply.')->group(
 
         // Delete reply
         Route::post('/delete/{id}', ['\App\Http\Controllers\ReplyController', 'delete'])->middleware('auth');
+
+        // Upvote a reply
+        Route::get('/upvote/{id}', ['\App\Http\Controllers\ReplyController', 'upvote'])->middleware('auth');
+
+        // Downvote a reply
+        Route::get('/downvote/{id}', ['\App\Http\Controllers\ReplyController', 'downvote'])->middleware('auth');
+
+        // Clear a vote
+        Route::get('/unvote/{id}', ['\App\Http\Controllers\ReplyController', 'unvote'])->middleware('auth');
     }
 );

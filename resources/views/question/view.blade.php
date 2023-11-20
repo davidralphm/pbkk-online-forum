@@ -16,6 +16,7 @@
         <b>{{ Session::get('message-success') }}</b><br><hr>
     @endif
 
+    <!-- Question title -->
     <h1>{{ $question->title }}</h1>
 
     @if ($question->user != null)
@@ -42,7 +43,9 @@
 
     <hr>
 
+    <!-- Replies -->
     @foreach ($replies as $key => $value)
+        <!-- Handle deleted user -->
         @if ($value->user != null)
             <h4>{{ $value->user->name }} wrote on {{ $value->created_at }}</h4>
         @else
@@ -57,6 +60,22 @@
             <p>
                 {{ $value->body }}
             </p>
+
+            <!-- Voting -->
+            @if ($value->userVote() != null)
+                @if ($value->userVote()->type == 'upvote')
+                    <em>You upvoted this reply</em>
+                    <a href="/reply/downvote/{{ $value->id }}">Downvote</a>
+                @else
+                    <em>You downvoted this reply</em>
+                    <a href="/reply/upvote/{{ $value->id }}">Upvote</a>
+                @endif
+                
+                <a href="/reply/unvote/{{ $value->id }}">Remove vote</a>
+            @else
+                <a href="/reply/upvote/{{ $value->id }}">Upvote</a>
+                <a href="/reply/downvote/{{ $value->id }}">Downvote</a>
+            @endif
 
             @if (Auth::id() == $value->user_id)
                 <a href="/reply/edit/{{ $value->id }}">Edit</a>
@@ -74,6 +93,7 @@
         <hr>
     @endforeach
 
+    <!-- Reply form -->
     @if ($question->locked == false)
         <h1>Reply to this question</h1>
 
