@@ -28,6 +28,18 @@
         <h5>Edited on {{ $question->updated_at }}</h5>
     @endif
 
+    @if ($question->locked == true)
+        <em>This question has been locked</em>
+    @else
+        @if ($question->user_id == Auth::id())
+            <form action="/question/lock/{{ $question->id }}" method="post">
+                {{ csrf_field() }}
+
+                <input type="submit" value="Lock Question">
+            </form>
+        @endif
+    @endif
+
     <hr>
 
     @foreach ($replies as $key => $value)
@@ -62,16 +74,21 @@
         <hr>
     @endforeach
 
-    <h1>Reply to this question</h1>
+    @if ($question->locked == false)
+        <h1>Reply to this question</h1>
 
-    <form action="/question/reply/{{ $question->id }}" method="post">
-        {{ csrf_field() }}
+        <form action="/question/reply/{{ $question->id }}" method="post">
+            {{ csrf_field() }}
 
-        <textarea name="body" id="" cols="30" rows="10" placeholder="Your reply"></textarea>
+            <textarea name="body" id="" cols="30" rows="10" placeholder="Your reply"></textarea>
 
-        <br>
+            <br>
 
-        <input type="submit" value="Post">
-    </form>
+            <input type="submit" value="Post">
+        </form>
+    @else
+        <h3>This question has been locked</h3>
+        <h3>You cannot reply to it</h3>
+    @endif
 </body>
 </html>

@@ -71,6 +71,9 @@ Route::prefix('/question')->name('question.')->group(
 
         // Edit question post
         Route::post('/edit/{id}', ['\App\Http\Controllers\QuestionController', 'editPost'])->middleware('auth');
+
+        // Lock question
+        Route::post('/lock/{id}', ['\App\Http\Controllers\QuestionController', 'lock'])->middleware('auth');
     }
 );
 

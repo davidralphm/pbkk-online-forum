@@ -88,6 +88,11 @@ class QuestionController extends Controller
             return back()->withErrors('Question not found!');
         }
 
+        // Make sure the question is not locked
+        if ($question->locked == true) {
+            return back()->withErrors('Question is locked!');
+        }
+
         $validated = $request->validate(
             [ 'body' => 'required' ],
             [ 'body.required' => 'Harap isikan teks pertanyaan',]
@@ -133,6 +138,21 @@ class QuestionController extends Controller
         $question->save();
 
         Session::flash('message-success', 'Question edited successfully!');
+        return back();
+    }
+
+    // Function to lock a question
+    public function lock(Request $request, int $id) {
+        $question = Question::find($id);
+
+        if (empty($question)) {
+            return back()->withErrors('Question not found!');
+        }
+
+        $question->locked = true;
+        $question->save();
+
+        Session::flash('message-success', 'Question locked successfully!');
         return back();
     }
 }
