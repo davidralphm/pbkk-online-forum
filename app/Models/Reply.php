@@ -10,6 +10,8 @@ class Reply extends Model
 {
     use HasFactory;
 
+    protected $table = 'replies';
+
     // Return user pemilik reply
     public function user() : BelongsTo {
         return $this->belongsTo(User::class);
