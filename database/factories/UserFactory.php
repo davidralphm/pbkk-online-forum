@@ -18,11 +18,12 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'username' => $this->faker->unique()->userName(),
-            'first_name' => $this->faker->firstName(),
-            'last_name' => $this->faker->lastName(),
+            'name' => $this->faker->unique()->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'password' => bcrypt('password123'), // Ganti password dengan yang di-hash
+            'remember_token' => Str::random(),
+            'created_at' => now(),
+            'role' => 'user',
         ];
     }
 
