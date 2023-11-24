@@ -6,6 +6,7 @@ use App\Models\Question;
 use App\Models\Reply;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Session;
 
 class QuestionController extends Controller
@@ -13,16 +14,28 @@ class QuestionController extends Controller
     // Return home page
     public function index() {
         // Most upvoted questions
-        $mostUpvoted = Reply::first();
+        $mostUpvoted = Question::orderByDesc('upvotes')->take(20)->get();
         
         // Newest questions
         $newestQuestions = Question::latest()->take(20)->get();
 
+        // Most active questions in the last 24 hours
+        // Sorted based on number of replies in the last 24 hours
+        $yesterdayDate = date('Y-m-d', strtotime('yesterday'));
+
+        $mostActive = Reply::select('question_id')
+        ->whereDate('updated_at', '>=', $yesterdayDate)
+        ->get()
+        ->groupBy('question_id')
+        ->sortDesc()
+        ->take(20);
+        
         return view(
             'homepage',
             [
                 'mostUpvoted' => $mostUpvoted,
                 'newestQuestions' => $newestQuestions,
+                'mostActive' => $mostActive,
             ]
         );
     }

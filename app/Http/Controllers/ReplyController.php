@@ -67,6 +67,7 @@ class ReplyController extends Controller
 
         // Check if the user has already upvoted this reply
         $vote = $reply->userVote();
+        $alreadyVoted = false;
 
         if ($vote != null) {
             // If the user has already upvoted
@@ -76,6 +77,8 @@ class ReplyController extends Controller
 
             // Else change the vote type to upvote
             $vote->type = 'upvote';
+
+            $alreadyVoted = true;
         } else {
             // If the user hasn't voted, create a new vote
             $vote = new Vote;
@@ -85,9 +88,22 @@ class ReplyController extends Controller
         }
 
         // Create a new vote for this reply
-        
         $vote->type = 'upvote';
         $vote->save();
+
+        // Check if the upvoted reply is the question body of a question
+        if ($reply->id === $reply->question->firstReply->id) {
+            $question = $reply->question;
+
+            // If already voted (meaning a down vote), add 2 to the number of upvotes, else 1
+            if ($alreadyVoted) {
+                $question->upvotes += 2;
+            } else {
+                $question->upvotes += 1;
+            }
+
+            $question->save();
+        }
 
         Session::flash('message-success', 'Reply upvoted successfully!');
         return back();
@@ -103,6 +119,7 @@ class ReplyController extends Controller
 
         // Check if the user has already downvoted this reply
         $vote = $reply->userVote();
+        $alreadyVoted = false;
 
         if ($vote != null) {
             // If the user has already downvoted
@@ -112,6 +129,8 @@ class ReplyController extends Controller
 
             // Else change the vote type to downvote
             $vote->type = 'downvote';
+
+            $alreadyVoted = true;
         } else {
             // If the user hasn't voted, create a new vote
             $vote = new Vote;
@@ -124,6 +143,20 @@ class ReplyController extends Controller
         
         $vote->type = 'downvote';
         $vote->save();
+
+        // Check if the downvoted reply is the question body of a question
+        if ($reply->id === $reply->question->firstReply->id) {
+            $question = $reply->question;
+
+            // If already voted (meaning an upvote), add -2 to the number of upvotes, else -1
+            if ($alreadyVoted) {
+                $question->upvotes -= 2;
+            } else {
+                $question->upvotes -= 1;
+            }
+
+            $question->save();
+        }
 
         Session::flash('message-success', 'Reply downvoted successfully!');
         return back();
@@ -142,6 +175,20 @@ class ReplyController extends Controller
 
         if ($vote == null) {
             return back()->withErrors('You have not voted on this reply');
+        }
+
+        // Check if the downvoted reply is the question body of a question
+        if ($reply->id === $reply->question->firstReply->id) {
+            $question = $reply->question;
+
+            // If the reply was upvoted, add -1 else add 1
+            if ($vote->type == 'upvote') {
+                $question->upvotes -= 1;
+            } else {
+                $question->upvotes += 1;
+            }
+
+            $question->save();
         }
 
         $vote->delete();
