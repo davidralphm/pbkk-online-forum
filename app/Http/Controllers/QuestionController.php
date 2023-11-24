@@ -12,7 +12,7 @@ class QuestionController extends Controller
 {
     // Return home page
     public function index() {
-
+        return view('homepage');
     }
 
     // Show create question page
@@ -56,11 +56,11 @@ class QuestionController extends Controller
 
     // Show the first page of a question
     public function view(int $id) {
-        $question = Question::find($id);
+        $question = Question::findOrFail($id);
 
-        if (empty($question)) {
-            return back()->withErrors('Question not found!');
-        }
+        // if (empty($question)) {
+        //     return back()->withErrors('Question not found!');
+        // }
 
         $replies = $question->replies()->limit(20)->get();
 
@@ -69,11 +69,11 @@ class QuestionController extends Controller
 
     // Show a specific page of a question
     public function viewPage(int $id, int $page) {
-        $question = Question::find($id);
+        $question = Question::findOrFail($id);
 
-        if (empty($question)) {
-            return back()->withErrors('Question not found!');
-        }
+        // if (empty($question)) {
+        //     return back()->withErrors('Question not found!');
+        // }
 
         $replies = $question->replies()->offset($page * 20)->limit(20)->get();
 
@@ -82,11 +82,11 @@ class QuestionController extends Controller
 
     // Reply to a question
     public function reply(Request $request, int $id) {
-        $question = Question::find($id);
+        $question = Question::findOrFail($id);
 
-        if (empty($question)) {
-            return back()->withErrors('Question not found!');
-        }
+        // if (empty($question)) {
+        //     return back()->withErrors('Question not found!');
+        // }
 
         // Make sure the question is not locked
         if ($question->locked == true) {
@@ -112,22 +112,22 @@ class QuestionController extends Controller
 
     // Return edit question view
     public function edit($id) {
-        $question = Question::find($id);
+        $question = Question::findOrFail($id);
 
-        if (empty($question)) {
-            return back()->withErrors('Question not found!');
-        }
+        // if (empty($question)) {
+        //     return back()->withErrors('Question not found!');
+        // }
 
         return view('question.edit', ['question' => $question]);
     }
 
     // Edit question post
     public function editPost(Request $request, int $id) {
-        $question = Question::find($id);
+        $question = Question::findOrFail($id);
 
-        if (empty($question)) {
-            return back()->withErrors('Question not found!');
-        }
+        // if (empty($question)) {
+        //     return back()->withErrors('Question not found!');
+        // }
 
         $validated = $request->validate(
             ['title' => 'required'],
@@ -143,11 +143,11 @@ class QuestionController extends Controller
 
     // Function to lock a question
     public function lock(Request $request, int $id) {
-        $question = Question::find($id);
+        $question = Question::findOrFail($id);
 
-        if (empty($question)) {
-            return back()->withErrors('Question not found!');
-        }
+        // if (empty($question)) {
+        //     return back()->withErrors('Question not found!');
+        // }
 
         $question->locked = true;
         $question->save();

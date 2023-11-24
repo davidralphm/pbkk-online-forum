@@ -13,9 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Homepage route
+Route::get('/', ['\App\Http\Controllers\QuestionController', 'index'])->name('homepage');
 
 // Register route
 Route::get('/register', ['\App\Http\Controllers\UserController', 'register'])->name('register');

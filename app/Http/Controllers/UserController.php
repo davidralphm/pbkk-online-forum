@@ -99,11 +99,11 @@ class UserController extends Controller
 
     // View user profile
     public function profile(int $id) {
-        $user = User::find($id);
+        $user = User::findOrFail($id);
 
-        if ($user == null) {
-            return redirect('/user/dashboard')->withErrors('User not found!');
-        }
+        // if ($user == null) {
+        //     return redirect('/user/dashboard')->withErrors('User not found!');
+        // }
 
         return view('user.profile', ['user' => $user]);
     }

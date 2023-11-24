@@ -12,22 +12,22 @@ class ReplyController extends Controller
 {
     // Return reply edit view
     public function edit(int $id) {
-        $reply = Reply::find($id);
+        $reply = Reply::findOrFail($id);
 
-        if (empty($reply)) {
-            return back()->withErrors('Reply not found!');
-        }
+        // if (empty($reply)) {
+        //     return back()->withErrors('Reply not found!');
+        // }
 
         return view('reply.edit', ['reply' => $reply]);
     }
 
     // Reply edit post
     public function editPost(Request $request, int $id) {
-        $reply = Reply::find($id);
+        $reply = Reply::findOrFail($id);
 
-        if (empty($reply)) {
-            return back()->withErrors('Reply not found!');
-        }
+        // if (empty($reply)) {
+        //     return back()->withErrors('Reply not found!');
+        // }
 
         $validated = $request->validate(
             ['body' => 'required'],
@@ -43,11 +43,11 @@ class ReplyController extends Controller
 
     // Delete reply function
     public function delete(Request $request, int $id) {
-        $reply = Reply::find($id);
+        $reply = Reply::findOrFail($id);
 
-        if (empty($reply)) {
-            return back()->withErrors('Reply not found!');
-        }
+        // if (empty($reply)) {
+        //     return back()->withErrors('Reply not found!');
+        // }
 
         // Set deleted flag to true
         $reply->deleted = true;
@@ -59,11 +59,11 @@ class ReplyController extends Controller
     
     // Upvote a reply function
     public function upvote(int $id) {
-        $reply = Reply::find($id);
+        $reply = Reply::findOrFail($id);
 
-        if (empty($reply)) {
-            return back()->withErrors('Reply not found!');
-        }
+        // if (empty($reply)) {
+        //     return back()->withErrors('Reply not found!');
+        // }
 
         // Check if the user has already upvoted this reply
         $vote = $reply->userVote();
@@ -95,11 +95,11 @@ class ReplyController extends Controller
 
     // Downvote a reply function
     public function downvote(int $id) {
-        $reply = Reply::find($id);
+        $reply = Reply::findOrFail($id);
 
-        if (empty($reply)) {
-            return back()->withErrors('Reply not found!');
-        }
+        // if (empty($reply)) {
+        //     return back()->withErrors('Reply not found!');
+        // }
 
         // Check if the user has already downvoted this reply
         $vote = $reply->userVote();
@@ -131,11 +131,11 @@ class ReplyController extends Controller
 
     // Unvote a reply function
     public function unvote(int $id) {
-        $reply = Reply::find($id);
+        $reply = Reply::findOrFail($id);
 
-        if (empty($reply)) {
-            return back()->withErrors('Reply not found!');
-        }
+        // if (empty($reply)) {
+        //     return back()->withErrors('Reply not found!');
+        // }
 
         // Check if vote exists
         $vote = $reply->userVote();
