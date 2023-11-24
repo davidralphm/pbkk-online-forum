@@ -12,7 +12,19 @@ class QuestionController extends Controller
 {
     // Return home page
     public function index() {
-        return view('homepage');
+        // Most upvoted questions
+        $mostUpvoted = Reply::first();
+        
+        // Newest questions
+        $newestQuestions = Question::latest()->take(20)->get();
+
+        return view(
+            'homepage',
+            [
+                'mostUpvoted' => $mostUpvoted,
+                'newestQuestions' => $newestQuestions,
+            ]
+        );
     }
 
     // Show create question page
