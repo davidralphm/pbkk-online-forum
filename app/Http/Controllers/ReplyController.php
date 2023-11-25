@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reply;
+use App\Models\ReportedReply;
 use App\Models\Vote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -194,6 +195,58 @@ class ReplyController extends Controller
         $vote->delete();
 
         Session::flash('message-success', 'Reply unvoted!');
+        return back();
+    }
+
+    // Function to report a reply
+    public function report(int $id) {
+        $reply = Reply::findOrFail($id);
+
+        return view('report.reply', ['reply' => $reply]);
+    }
+
+    // Report reply post
+    public function reportPost(Request $request, int $id) {
+        $reply = Reply::findOrFail($id);
+
+        $validated = $request->validate(
+            ['reason' => 'required'],
+            ['reason.required' => 'Reporting reason is required']
+        );
+
+        // Check if the user has already reported this question
+        $report = $reply->userReport();
+
+        if ($report != null) {
+            return back()->withErrors('You have already reported this reply!');
+        }
+
+        // Create the report
+        $report = new ReportedReply();
+
+        $report->user_id = Auth::id();
+        $report->reported_id = $reply->id;
+        $report->reason = $request->reason;
+
+        $report->save();
+
+        Session::flash('message-success', 'Reply reported successfully!');
+        return back();
+    }
+
+    // Function to remove a report
+    public function removeReport(int $id) {
+        $reply = Reply::findOrFail($id);
+
+        $report = $reply->userReport();
+
+        if ($report == null) {
+            return back()->withErrors('You have not reported this reply!');
+        }
+
+        $report->delete();
+
+        Session::flash('message-success', 'Removed report successfully!');
         return back();
     }
 }

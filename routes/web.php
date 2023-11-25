@@ -50,6 +50,15 @@ Route::prefix('/user')->name('user.')->group(
 
         // Delete profile image
         Route::get('/deleteImage', ['\App\Http\Controllers\UserController', 'deleteImage'])->middleware('auth');
+
+        // Report reply
+        Route::get('/report/{id}', ['\App\Http\Controllers\UserController', 'report'])->middleware('auth');
+
+        // Report reply post
+        Route::post('/report/{id}', ['\App\Http\Controllers\UserController', 'reportPost'])->middleware('auth');
+
+        // Remove reply report
+        Route::get('/removeReport/{id}', ['\App\Http\Controllers\UserController', 'removeReport'])->middleware('auth');
     }
 );
 
@@ -76,6 +85,15 @@ Route::prefix('/question')->name('question.')->group(
 
         // Lock question
         Route::post('/lock/{id}', ['\App\Http\Controllers\QuestionController', 'lock'])->middleware('auth');
+
+        // Report question
+        Route::get('/report/{id}', ['\App\Http\Controllers\QuestionController', 'report'])->middleware('auth');
+
+        // Report question post
+        Route::post('/report/{id}', ['\App\Http\Controllers\QuestionController', 'reportPost'])->middleware('auth');
+
+        // Remove question report
+        Route::get('/removeReport/{id}', ['\App\Http\Controllers\QuestionController', 'removeReport'])->middleware('auth');
     }
 );
 
@@ -99,5 +117,14 @@ Route::prefix('/reply')->name('reply.')->group(
 
         // Clear a vote
         Route::get('/unvote/{id}', ['\App\Http\Controllers\ReplyController', 'unvote'])->middleware('auth');
+
+        // Report reply
+        Route::get('/report/{id}', ['\App\Http\Controllers\ReplyController', 'report'])->middleware('auth');
+
+        // Report reply post
+        Route::post('/report/{id}', ['\App\Http\Controllers\ReplyController', 'reportPost'])->middleware('auth');
+
+        // Remove reply report
+        Route::get('/removeReport/{id}', ['\App\Http\Controllers\ReplyController', 'removeReport'])->middleware('auth');
     }
 );

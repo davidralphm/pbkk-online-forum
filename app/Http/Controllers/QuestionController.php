@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Question;
 use App\Models\Reply;
+use App\Models\ReportedQuestion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
@@ -190,6 +191,58 @@ class QuestionController extends Controller
         $question->save();
 
         Session::flash('message-success', 'Question locked successfully!');
+        return back();
+    }
+
+    // Function to report a question
+    public function report(int $id) {
+        $question = Question::findOrFail($id);
+
+        return view('report.question', ['question' => $question]);
+    }
+
+    // Report question post
+    public function reportPost(Request $request, int $id) {
+        $question = Question::findOrFail($id);
+
+        $validated = $request->validate(
+            ['reason' => 'required'],
+            ['reason.required' => 'Reporting reason is required']
+        );
+
+        // Check if the user has already reported this question
+        $report = $question->userReport();
+
+        if ($report != null) {
+            return back()->withErrors('You have already reported this question!');
+        }
+
+        // Create the report
+        $report = new ReportedQuestion;
+
+        $report->user_id = Auth::id();
+        $report->reported_id = $question->id;
+        $report->reason = $request->reason;
+
+        $report->save();
+
+        Session::flash('message-success', 'Question reported successfully!');
+        return back();
+    }
+
+    // Function to remove a report
+    public function removeReport(int $id) {
+        $question = Question::findOrFail($id);
+
+        $report = $question->userReport();
+
+        if ($report == null) {
+            return back()->withErrors('You have not reported this question!');
+        }
+
+        $report->delete();
+
+        Session::flash('message-success', 'Removed report successfully!');
         return back();
     }
 }

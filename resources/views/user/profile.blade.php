@@ -22,6 +22,12 @@
     <b>About : {{ $user->about }}</b><br><hr>
     <b>Image URL : {{ $user->image_url }}</b><br><hr>
 
+    @if ($user->userReport() == null)
+        <a href="/user/report/{{ $user->id }}">Report</a>
+    @else
+        <a href="/user/removeReport/{{ $user->id }}">Remove Report</a>
+    @endif
+
     @if (!empty($user->image_url) && $user->image_url !== '')
         <h3>Profile Image</h3>
         <img src="/storage/uploads/{{ $user->image_url }}" alt="Profile Image"><br><br>

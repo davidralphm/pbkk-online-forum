@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -55,5 +56,10 @@ class User extends Authenticatable
     // Return semua replies yang dimiliki user
     public function replies() : HasMany {
         return $this->hasMany(Reply::class);
+    }
+
+    // Return the current authenticated user's report for this user
+    public function userReport() {
+        return ReportedUser::where('reported_id', $this->id)->where('user_id', Auth::id())->first();
     }
 }

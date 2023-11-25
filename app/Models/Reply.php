@@ -28,4 +28,9 @@ class Reply extends Model
     public function userVote() {
         return Vote::where('reply_id', $this->id)->where('user_id', Auth::id())->first();
     }
+
+    // Return the current authenticated user's report for this reply
+    public function userReport() {
+        return ReportedReply::where('reported_id', $this->id)->where('user_id', Auth::id())->first();
+    }
 }

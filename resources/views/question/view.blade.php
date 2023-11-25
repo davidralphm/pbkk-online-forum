@@ -41,6 +41,12 @@
         @endif
     @endif
 
+    @if ($question->userReport() == null)
+        <a href="/question/report/{{ $question->id }}">Report</a>
+    @else
+        <a href="/question/removeReport/{{ $question->id }}">Remove Report</a>
+    @endif
+
     <hr>
 
     <!-- Replies -->
@@ -77,6 +83,14 @@
                 <a href="/reply/downvote/{{ $value->id }}">Downvote</a>
             @endif
 
+            <!-- Reporting -->
+            @if ($value->userReport() == null)
+                <a href="/reply/report/{{ $value->id }}">Report</a>
+            @else
+                <a href="/reply/removeReport/{{ $value->id }}">Remove Report</a>
+            @endif
+
+            <!-- Editing -->
             @if (Auth::id() == $value->user_id)
                 <a href="/reply/edit/{{ $value->id }}">Edit</a>
 

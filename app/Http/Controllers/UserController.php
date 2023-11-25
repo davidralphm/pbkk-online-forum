@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ReportedUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -223,5 +224,57 @@ class UserController extends Controller
 
         Session::flash('message-success', 'Gambar profile berhasil dihapus!');
         return redirect('/user/dashboard');
+    }
+
+    // Function to report a user
+    public function report(int $id) {
+        $user = User::findOrFail($id);
+
+        return view('report.user', ['user' => $user]);
+    }
+
+    // Report user post
+    public function reportPost(Request $request, int $id) {
+        $user = User::findOrFail($id);
+
+        $validated = $request->validate(
+            ['reason' => 'required'],
+            ['reason.required' => 'Reporting reason is required']
+        );
+
+        // Check if the user has already reported this user
+        $report = $user->userReport();
+
+        if ($report != null) {
+            return back()->withErrors('You have already reported this user!');
+        }
+
+        // Create the report
+        $report = new ReportedUser;
+
+        $report->user_id = Auth::id();
+        $report->reported_id = $user->id;
+        $report->reason = $request->reason;
+
+        $report->save();
+
+        Session::flash('message-success', 'User reported successfully!');
+        return back();
+    }
+
+    // Function to remove a report
+    public function removeReport(int $id) {
+        $user = User::findOrFail($id);
+
+        $report = $user->userReport();
+
+        if ($report == null) {
+            return back()->withErrors('You have not reported this user!');
+        }
+
+        $report->delete();
+
+        Session::flash('message-success', 'Removed report successfully!');
+        return back();
     }
 }
