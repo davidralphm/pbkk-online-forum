@@ -58,6 +58,22 @@ class ReplyController extends Controller
         return back();
     }
     
+    // Undelete reply function
+    public function undelete(Request $request, int $id) {
+        $reply = Reply::findOrFail($id);
+
+        // if (empty($reply)) {
+        //     return back()->withErrors('Reply not found!');
+        // }
+
+        // Set deleted flag to true
+        $reply->deleted = false;
+        $reply->save();
+
+        Session::flash('message-success', 'Reply undeleted successfully!');
+        return back();
+    }
+
     // Upvote a reply function
     public function upvote(int $id) {
         $reply = Reply::findOrFail($id);

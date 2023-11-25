@@ -116,6 +116,7 @@ class UserController extends Controller
         // If the user is an admin, show reports
         $reportedQuestions = null;
         $reportedReplies = null;
+        $reportedUsers = null;
 
         if (Auth::user()->role == 'admin') {
             $reportedQuestions = ReportedQuestion::select('id', 'user_id', 'reported_id', 'reason')

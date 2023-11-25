@@ -16,20 +16,38 @@
         <b>{{ Session::get('message-success') }}</b><br><hr>
     @endif
 
-    <h1>Reports for {{ $reply->user->name }}'s reply</h1>
+    @if (count($reports))
+        <h1>Reports for {{ $reply->user->name }}'s reply</h1>
 
-    <table border="1px">
-        <tr>
-            <th>Reported By</th>
-            <th>Reason</th>
-        </tr>
+        @if ($reply->deleted == false)
+            <form action="/reply/delete/{{ $reply->id }}" method="post">
+                {{ csrf_field() }}
 
-        @foreach ($reports as $key => $value)
+                <input type="submit" value="Delete Reply">
+            </form>
+        @else
+            <form action="/reply/undelete/{{ $reply->id }}" method="post">
+                {{ csrf_field() }}
+
+                <input type="submit" value="Undelete Reply">
+            </form>
+        @endif
+
+        <table border="1px">
             <tr>
-                <td>{{ $value->user->name }}</td>
-                <td>{{ $value->reason }}</td>
+                <th>Reported By</th>
+                <th>Reason</th>
             </tr>
-        @endforeach
-    </table>
+
+            @foreach ($reports as $key => $value)
+                <tr>
+                    <td>{{ $value->user->name }}</td>
+                    <td>{{ $value->reason }}</td>
+                </tr>
+            @endforeach
+        </table>
+    @else
+        <h2>There are no reports for this reply</h2>
+    @endif
 </body>
 </html>

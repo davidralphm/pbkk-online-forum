@@ -124,6 +124,9 @@ Route::prefix('/reply')->name('reply.')->group(
         // Delete reply
         Route::post('/delete/{id}', ['\App\Http\Controllers\ReplyController', 'delete'])->middleware('auth');
 
+        // Undelete reply
+        Route::post('/undelete/{id}', ['\App\Http\Controllers\ReplyController', 'undelete'])->middleware('auth');
+
         // Upvote a reply
         Route::get('/upvote/{id}', ['\App\Http\Controllers\ReplyController', 'upvote'])->middleware('auth');
 

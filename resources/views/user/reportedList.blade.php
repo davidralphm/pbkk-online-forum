@@ -18,9 +18,13 @@
 
     <h1>Reported Users</h1>
 
-    @foreach ($reported as $item)
-        <h3>{{ $item[0]->reportedUser->name }} <em>[{{ count($item) }} report(s)]</em></h3>
-        <a href="/user/reportedList/view/{{ $item[0]->reportedUser->id }}">View all reports</a>
-    @endforeach
+    @if (count($reported))
+        @foreach ($reported as $item)
+            <h3>{{ $item[0]->reportedUser->name }} <em>[{{ count($item) }} report(s)]</em></h3>
+            <a href="/user/reportedList/view/{{ $item[0]->reportedUser->id }}">View all reports</a>
+        @endforeach
+    @else
+        <h2>There are no reported users</h2>
+    @endif
 </body>
 </html>

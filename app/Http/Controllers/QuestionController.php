@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Question;
 use App\Models\Reply;
 use App\Models\ReportedQuestion;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
@@ -30,6 +31,13 @@ class QuestionController extends Controller
         ->groupBy('question_id')
         ->sortDesc()
         ->take(20);
+
+        // Newest users
+        $newestUsers = User::select('id', 'name', 'created_at')
+        ->whereDate('created_at', '>=', $yesterdayDate)
+        ->orderByDesc('created_at')
+        ->get()
+        ->take(20);
         
         return view(
             'homepage',
@@ -37,6 +45,7 @@ class QuestionController extends Controller
                 'mostUpvoted' => $mostUpvoted,
                 'newestQuestions' => $newestQuestions,
                 'mostActive' => $mostActive,
+                'newestUsers' => $newestUsers,
             ]
         );
     }

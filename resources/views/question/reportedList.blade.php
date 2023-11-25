@@ -18,9 +18,33 @@
 
     <h1>Reported Questions</h1>
 
-    @foreach ($reported as $item)
-        <h3>{{ $item[0]->reportedQuestion->title }} <em>[{{ count($item) }} report(s)]</em></h3>
-        <a href="/question/reportedList/view/{{ $item[0]->reportedQuestion->id }}">View all reports</a>
-    @endforeach
+    @if (count($reported))
+        @foreach ($reported as $item)
+            <h3>
+                <a href="/question/view/{{ $item[0]->reportedQuestion->id }}">
+                    {{ $item[0]->reportedQuestion->title }}
+                </a>
+
+                <em>[{{ count($item) }} report(s)]</em>
+            </h3>
+            <a href="/question/reportedList/view/{{ $item[0]->reportedQuestion->id }}">View all reports</a>
+
+            @if ($item[0]->reportedQuestion->locked == false)
+                <form action="/question/lock/{{ $item[0]->reportedQuestion->id }}" method="post">
+                    {{ csrf_field() }}
+
+                    <input type="submit" value="Lock Question">
+                </form>
+            @else
+                <form action="/question/unlock/{{ $item[0]->reportedQuestion->id }}" method="post">
+                    {{ csrf_field() }}
+
+                    <input type="submit" value="Unlock Question">
+                </form>
+            @endif
+        @endforeach
+    @else
+        <h2>There are no reported questions</h2>
+    @endif
 </body>
 </html>

@@ -54,8 +54,20 @@
             <h3>{{ $value[0]->question->title }}</h3>
         </a>
         
-        <h5>Asked by <a href="/user/profile/{{ $value[0]->question->user->id }}">{{ $value[0]->question->user->name }}</a> | {{ $value[0]->question->upvotes }} upvotes</h5>
+        <h5>Asked by <a href="/user/profile/{{ $value[0]->question->user->id }}">{{ $value[0]->question->user->name }}</a> | {{ $value[0]->question->upvotes }} upvotes | {{ count($value) }} new replies</h5>
 
+        <br>
+    @endforeach
+
+    <hr>
+    <h2>Newest Users in the Last 24 Hours</h2>
+    <hr>
+
+    @foreach ($newestUsers as $key => $value)
+        <a href="/user/profile/{{ $value->id }}">
+            <h3>{{ $value->name }}</h3>
+        </a>
+        
         <br>
     @endforeach
 </body>

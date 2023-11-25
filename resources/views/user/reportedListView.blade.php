@@ -18,18 +18,22 @@
 
     <h1>Reports for '{{ $user->name }}'</h1>
 
-    <table border="1px">
-        <tr>
-            <th>Reported By</th>
-            <th>Reason</th>
-        </tr>
-
-        @foreach ($reports as $key => $value)
+    @if (count($reports))
+        <table border="1px">
             <tr>
-                <td>{{ $value->user->name }}</td>
-                <td>{{ $value->reason }}</td>
+                <th>Reported By</th>
+                <th>Reason</th>
             </tr>
-        @endforeach
-    </table>
+
+            @foreach ($reports as $key => $value)
+                <tr>
+                    <td>{{ $value->user->name }}</td>
+                    <td>{{ $value->reason }}</td>
+                </tr>
+            @endforeach
+        </table>
+    @else
+        <h2>There are no reports for this user</h2>
+    @endif
 </body>
 </html>
