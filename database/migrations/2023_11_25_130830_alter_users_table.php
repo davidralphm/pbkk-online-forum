@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->boolean('banned')->default(false);
-            $table->timestamp('banned_until');
+            $table->datetime('banned_until')->default('1970-01-01 00:00:00');
         });
     }
 

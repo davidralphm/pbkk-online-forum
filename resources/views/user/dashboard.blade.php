@@ -38,7 +38,7 @@
             <br>
         @endforeach
 
-        <a href="/question/reportedList">View All ({{ count($reportedQuestions) }})</a>
+        <a href="/question/reportedList/all">View All ({{ count($reportedQuestions) }})</a>
 
         <hr>
 
@@ -57,7 +57,7 @@
             <br>
         @endforeach
 
-        <a href="/reply/reportedList">View All ({{ count($reportedReplies) }})</a>
+        <a href="/reply/reportedList/all">View All ({{ count($reportedReplies) }})</a>
         
         <hr>
 
@@ -76,7 +76,7 @@
             <br>
         @endforeach
 
-        <a href="/user/reportedList">View All ({{ count($reportedUsers) }})</a>
+        <a href="/user/reportedList/all">View All ({{ count($reportedUsers) }})</a>
 
         <hr>
     @endif

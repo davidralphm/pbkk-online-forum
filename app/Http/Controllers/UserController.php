@@ -81,6 +81,23 @@ class UserController extends Controller
 
         // Jika authentication berhasil
         if (Auth::attempt($validated)) {
+            $user = Auth::user();
+
+            if ($user->banned == true) {
+                // Check if user is already unbanned
+                if ($user->banned_until > now()) {
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
+
+                    return back()->withErrors('You have been banned, cannot login!');
+                } else {
+                    $user->banned = false;
+                    $user->save();
+
+                    Session::flash('message-success', 'You have been unbanned automatically!');
+                }
+            }
+
             $request->session()->regenerate();
 
             return redirect()->intended('/user/dashboard');
