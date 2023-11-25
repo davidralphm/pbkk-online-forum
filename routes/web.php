@@ -51,10 +51,10 @@ Route::prefix('/user')->name('user.')->group(
         // Delete profile image
         Route::get('/deleteImage', ['\App\Http\Controllers\UserController', 'deleteImage'])->middleware('auth');
 
-        // Report reply
+        // Report user
         Route::get('/report/{id}', ['\App\Http\Controllers\UserController', 'report'])->middleware('auth');
 
-        // Report reply post
+        // Report user post
         Route::post('/report/{id}', ['\App\Http\Controllers\UserController', 'reportPost'])->middleware('auth');
 
         // Remove reply report
@@ -65,6 +65,12 @@ Route::prefix('/user')->name('user.')->group(
 
         // View all reports for a reported user
         Route::get('/reportedList/view/{id}', ['\App\Http\Controllers\UserController', 'reportedListView'])->middleware('auth');
+
+        // Ban user
+        Route::post('/ban/{id}', ['\App\Http\Controllers\UserController', 'ban'])->middleware('auth');
+
+        // Unban user
+        Route::post('/unban/{id}', ['\App\Http\Controllers\UserController', 'unban'])->middleware('auth');
     }
 );
 

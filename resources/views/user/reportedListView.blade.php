@@ -19,6 +19,20 @@
     <h1>Reports for '{{ $user->name }}'</h1>
 
     @if (count($reports))
+        @if ($user->banned == false)
+            <form action="/user/ban/{{ $user->id }}" method="post">
+                {{ csrf_field() }}
+
+                <input type="submit" value="Ban User">
+            </form>
+        @else
+            <form action="/user/unban/{{ $user->id }}" method="post">
+                {{ csrf_field() }}
+
+                <input type="submit" value="Unban User">
+            </form>
+        @endif
+
         <table border="1px">
             <tr>
                 <th>Reported By</th>

@@ -335,4 +335,26 @@ class UserController extends Controller
 
         return view('user.reportedListView', ['user' => $user, 'reports' => $reports]);
     }
+
+    // Function to ban a user
+    public function ban(Request $request, int $id) {
+        $user = User::findOrFail($id);
+
+        $user->banned = true;
+        $user->save();
+
+        Session::flash('message-success', 'User banned successfully!');
+        return back();
+    }
+
+    // Function to unban a user
+    public function unban(Request $request, int $id) {
+        $user = User::findOrFail($id);
+
+        $user->banned = false;
+        $user->save();
+
+        Session::flash('message-success', 'User unbanned successfully!');
+        return back();
+    }
 }

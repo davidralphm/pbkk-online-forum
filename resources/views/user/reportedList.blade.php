@@ -22,6 +22,20 @@
         @foreach ($reported as $item)
             <h3>{{ $item[0]->reportedUser->name }} <em>[{{ count($item) }} report(s)]</em></h3>
             <a href="/user/reportedList/view/{{ $item[0]->reportedUser->id }}">View all reports</a>
+
+            @if ($item[0]->reportedUser->banned == false)
+                <form action="/user/ban/{{ $item[0]->reportedUser->id }}" method="post">
+                    {{ csrf_field() }}
+
+                    <input type="submit" value="Ban User">
+                </form>
+            @else
+                <form action="/user/unban/{{ $item[0]->reportedUser->id }}" method="post">
+                    {{ csrf_field() }}
+
+                    <input type="submit" value="Unban User">
+                </form>
+            @endif
         @endforeach
     @else
         <h2>There are no reported users</h2>
