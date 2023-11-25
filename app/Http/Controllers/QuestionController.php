@@ -40,6 +40,18 @@ class QuestionController extends Controller
         );
     }
 
+    // Search page
+    public function search(Request $request) {
+        $page = max(0, $request->page - 1);
+
+        $questions = Question::where('title', 'LIKE', '%' . $request->search . '%')
+        ->offset($page * 20)
+        ->limit(20)
+        ->get();
+
+        return view('searchpage', ['questions' => $questions]);
+    }
+
     // Show create question page
     public function create() {
         return view('question.create');

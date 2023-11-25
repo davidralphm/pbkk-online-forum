@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\Route;
 // Homepage route
 Route::get('/', ['\App\Http\Controllers\QuestionController', 'index'])->name('homepage');
 
+// Searchpage route
+Route::get('/search', ['\App\Http\Controllers\QuestionController', 'search'])->name('searchpage');
+
 // Register route
 Route::get('/register', ['\App\Http\Controllers\UserController', 'register'])->name('register');
 Route::post('/register', ['\App\Http\Controllers\UserController', 'registerPost']);

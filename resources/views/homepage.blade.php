@@ -7,7 +7,16 @@
 </head>
 <body>
     <h1>Home</h1>
-    
+
+    <hr>
+    <h2>Search</h2>
+
+    <form action="/search" method="get">
+        <input type="text" name="search" id="search" placeholder="Search questions">
+
+        <input type="submit" value="Search">
+    </form>
+
     <hr>
     <h2>Newest Questions</h2>
     <hr>
