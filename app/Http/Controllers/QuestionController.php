@@ -194,6 +194,21 @@ class QuestionController extends Controller
         return back();
     }
 
+    // Function to unlock a question
+    public function unlock(Request $request, int $id) {
+        $question = Question::findOrFail($id);
+
+        // if (empty($question)) {
+        //     return back()->withErrors('Question not found!');
+        // }
+
+        $question->locked = false;
+        $question->save();
+
+        Session::flash('message-success', 'Question unlocked successfully!');
+        return back();
+    }
+
     // Function to report a question
     public function report(int $id) {
         $question = Question::findOrFail($id);
@@ -244,5 +259,31 @@ class QuestionController extends Controller
 
         Session::flash('message-success', 'Removed report successfully!');
         return back();
+    }
+
+    // Function to show all reported questions
+    public function reportedList(Request $request) {
+        $page = max(0, $request->page - 1);
+
+        $reported = ReportedQuestion::offset($page * 20)
+        ->limit(20)
+        ->get()
+        ->groupBy('reported_id')
+        ->sortDesc();
+
+        return view('question.reportedList', ['reported' => $reported]);
+    }
+
+    // Function to show all the reports for a reported question
+    public function reportedListView(Request $request, int $id) {
+        $page = max(0, $request->page - 1);
+
+        $question = Question::findOrFail($id);
+        $reports = ReportedQuestion::where('reported_id', $id)
+        ->offset($page * 20)
+        ->limit(20)
+        ->get();
+
+        return view('question.reportedListView', ['question' => $question, 'reports' => $reports]);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ReportedQuestion;
+use App\Models\ReportedReply;
 use App\Models\ReportedUser;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -111,7 +113,36 @@ class UserController extends Controller
 
     // Return dashboard view
     public function dashboard() {
-        return view('user.dashboard', ['user' => Auth::user()]);
+        // If the user is an admin, show reports
+        $reportedQuestions = null;
+        $reportedReplies = null;
+
+        if (Auth::user()->role == 'admin') {
+            $reportedQuestions = ReportedQuestion::select('id', 'user_id', 'reported_id', 'reason')
+            ->get()
+            ->groupBy('reported_id')
+            ->take(10);
+
+            $reportedReplies = ReportedReply::select('id', 'user_id', 'reported_id', 'reason')
+            ->get()
+            ->groupBy('reported_id')
+            ->take(10);
+
+            $reportedUsers = ReportedUser::select('id', 'user_id', 'reported_id', 'reason')
+            ->get()
+            ->groupBy('reported_id')
+            ->take(10);
+        }
+
+        return view(
+            'user.dashboard',
+            [
+                'user' => Auth::user(),
+                'reportedQuestions' => $reportedQuestions,
+                'reportedReplies' => $reportedReplies,
+                'reportedUsers' => $reportedUsers,
+            ]
+        );
     }
 
     // Edit account
@@ -276,5 +307,31 @@ class UserController extends Controller
 
         Session::flash('message-success', 'Removed report successfully!');
         return back();
+    }
+
+    // Function to show all reported users
+    public function reportedList(Request $request) {
+        $page = max(0, $request->page - 1);
+
+        $reported = ReportedUser::offset($page * 20)
+        ->limit(20)
+        ->get()
+        ->groupBy('reported_id')
+        ->sortDesc();
+
+        return view('user.reportedList', ['reported' => $reported]);
+    }
+
+    // Function to show all the reports for a reported user
+    public function reportedListView(Request $request, int $id) {
+        $page = max(0, $request->page - 1);
+
+        $user = User::findOrFail($id);
+        $reports = ReportedUser::where('reported_id', $id)
+        ->offset($page * 20)
+        ->limit(20)
+        ->get();
+
+        return view('user.reportedListView', ['user' => $user, 'reports' => $reports]);
     }
 }

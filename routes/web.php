@@ -59,6 +59,12 @@ Route::prefix('/user')->name('user.')->group(
 
         // Remove reply report
         Route::get('/removeReport/{id}', ['\App\Http\Controllers\UserController', 'removeReport'])->middleware('auth');
+
+        // Reported users list
+        Route::get('/reportedList/all', ['\App\Http\Controllers\UserController', 'reportedList'])->middleware('auth');
+
+        // View all reports for a reported user
+        Route::get('/reportedList/view/{id}', ['\App\Http\Controllers\UserController', 'reportedListView'])->middleware('auth');
     }
 );
 
@@ -86,6 +92,9 @@ Route::prefix('/question')->name('question.')->group(
         // Lock question
         Route::post('/lock/{id}', ['\App\Http\Controllers\QuestionController', 'lock'])->middleware('auth');
 
+        // Unlock question
+        Route::post('/unlock/{id}', ['\App\Http\Controllers\QuestionController', 'unlock'])->middleware('auth');
+
         // Report question
         Route::get('/report/{id}', ['\App\Http\Controllers\QuestionController', 'report'])->middleware('auth');
 
@@ -94,6 +103,12 @@ Route::prefix('/question')->name('question.')->group(
 
         // Remove question report
         Route::get('/removeReport/{id}', ['\App\Http\Controllers\QuestionController', 'removeReport'])->middleware('auth');
+
+        // Reported questions list
+        Route::get('/reportedList/all', ['\App\Http\Controllers\QuestionController', 'reportedList'])->middleware('auth');
+
+        // View all reports for a reported question
+        Route::get('/reportedList/view/{id}', ['\App\Http\Controllers\QuestionController', 'reportedListView'])->middleware('auth');
     }
 );
 
@@ -126,5 +141,11 @@ Route::prefix('/reply')->name('reply.')->group(
 
         // Remove reply report
         Route::get('/removeReport/{id}', ['\App\Http\Controllers\ReplyController', 'removeReport'])->middleware('auth');
+
+        // Reported replies list
+        Route::get('/reportedList/all', ['\App\Http\Controllers\ReplyController', 'reportedList'])->middleware('auth');
+
+        // View all reports for a reported reply
+        Route::get('/reportedList/view/{id}', ['\App\Http\Controllers\ReplyController', 'reportedListView'])->middleware('auth');
     }
 );

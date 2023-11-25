@@ -22,6 +22,65 @@
     <b>About : {{ $user->about }}</b><br><hr>
     <b>Image URL : {{ $user->image_url }}</b><br><hr>
 
+    @if (Auth::user()->role == 'admin')
+        <h3>Reported Questions</h3>
+
+        @foreach ($reportedQuestions as $reportedQuestion)
+            <div>
+                <h4>
+                    {{ $reportedQuestion[0]->reportedQuestion->title }}
+                </h4>
+
+                <em>Number of reports : {{ count($reportedQuestion) }}</em>
+            </div>
+
+            <hr>
+            <br>
+        @endforeach
+
+        <a href="/question/reportedList">View All ({{ count($reportedQuestions) }})</a>
+
+        <hr>
+
+        <h3>Reported Replies</h3>
+
+        @foreach ($reportedReplies as $reportedReply)
+            <div>
+                <h4>
+                    {{ $reportedReply[0]->reportedReply->title }}
+                </h4>
+
+                <em>Number of reports : {{ count($reportedReply) }}</em>
+            </div>
+
+            <hr>
+            <br>
+        @endforeach
+
+        <a href="/reply/reportedList">View All ({{ count($reportedReplies) }})</a>
+        
+        <hr>
+
+        <h3>Reported Users</h3>
+
+        @foreach ($reportedUsers as $reportedUser)
+            <div>
+                <h4>
+                    {{ $reportedUser[0]->reportedUser->title }}
+                </h4>
+
+                <em>Number of reports : {{ count($reportedUser) }}</em>
+            </div>
+
+            <hr>
+            <br>
+        @endforeach
+
+        <a href="/user/reportedList">View All ({{ count($reportedUsers) }})</a>
+
+        <hr>
+    @endif
+
     @if (!empty($user->image_url) && $user->image_url !== '')
         <h3>Profile Image</h3>
         <img src="/storage/uploads/{{ $user->image_url }}" alt="Profile Image"><br><br>

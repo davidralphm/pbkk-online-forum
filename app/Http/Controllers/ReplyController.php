@@ -249,4 +249,30 @@ class ReplyController extends Controller
         Session::flash('message-success', 'Removed report successfully!');
         return back();
     }
+
+    // Function to show all reported replies
+    public function reportedList(Request $request) {
+        $page = max(0, $request->page - 1);
+
+        $reported = ReportedReply::offset($page * 20)
+        ->limit(20)
+        ->get()
+        ->groupBy('reported_id')
+        ->sortDesc();
+
+        return view('reply.reportedList', ['reported' => $reported]);
+    }
+
+    // Function to show all the reports for a reported reply
+    public function reportedListView(Request $request, int $id) {
+        $page = max(0, $request->page - 1);
+
+        $reply = Reply::findOrFail($id);
+        $reports = ReportedReply::where('reported_id', $id)
+        ->offset($page * 20)
+        ->limit(20)
+        ->get();
+
+        return view('reply.reportedListView', ['reply' => $reply, 'reports' => $reports]);
+    }
 }
