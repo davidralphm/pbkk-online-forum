@@ -66,8 +66,11 @@ Route::prefix('/user')->name('user.')->group(
         // View all reports for a reported user
         Route::get('/reportedList/view/{id}', ['\App\Http\Controllers\UserController', 'reportedListView'])->middleware('auth');
 
-        // Ban user
-        Route::post('/ban/{id}', ['\App\Http\Controllers\UserController', 'ban'])->middleware('auth');
+        // Ban user page
+        Route::get('/ban/{id}', ['\App\Http\Controllers\UserController', 'ban'])->middleware('auth');
+
+        // Ban user post request
+        Route::post('/ban/{id}', ['\App\Http\Controllers\UserController', 'banPost'])->middleware('auth');
 
         // Unban user
         Route::post('/unban/{id}', ['\App\Http\Controllers\UserController', 'unban'])->middleware('auth');

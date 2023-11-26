@@ -24,11 +24,7 @@
             <a href="/user/reportedList/view/{{ $item[0]->reportedUser->id }}">View all reports</a>
 
             @if ($item[0]->reportedUser->banned == false)
-                <form action="/user/ban/{{ $item[0]->reportedUser->id }}" method="post">
-                    {{ csrf_field() }}
-
-                    <input type="submit" value="Ban User">
-                </form>
+                <a href="/user/ban/{{ $item[0]->reportedUser->id }}">Ban User</a>
             @else
                 <form action="/user/unban/{{ $item[0]->reportedUser->id }}" method="post">
                     {{ csrf_field() }}

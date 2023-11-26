@@ -20,11 +20,7 @@
 
     @if (count($reports))
         @if ($user->banned == false)
-            <form action="/user/ban/{{ $user->id }}" method="post">
-                {{ csrf_field() }}
-
-                <input type="submit" value="Ban User">
-            </form>
+            <a href="/user/ban/{{ $user->id }}">Ban User</a>
         @else
             <form action="/user/unban/{{ $user->id }}" method="post">
                 {{ csrf_field() }}

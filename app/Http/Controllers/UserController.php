@@ -81,7 +81,7 @@ class UserController extends Controller
 
         // Jika authentication berhasil
         if (Auth::attempt($validated)) {
-            $user = Auth::user();
+            $user = User::find(Auth::id());
 
             if ($user->banned == true) {
                 // Check if user is already unbanned
@@ -357,7 +357,24 @@ class UserController extends Controller
     public function ban(Request $request, int $id) {
         $user = User::findOrFail($id);
 
+        return view('user.ban', ['user' => $user]);
+    }
+
+    // Function to ban a user
+    public function banPost(Request $request, int $id) {
+        $user = User::findOrFail($id);
+
+        $validated = $request->validate(
+            ['banned_until' => 'required|date'],
+
+            [
+                'banned_until.required' => 'Unban time is required!',
+                'banned_until.date' => 'Unban time must be a valid date!',
+            ]
+        );
+
         $user->banned = true;
+        $user->banned_until = $request->banned_until;
         $user->save();
 
         Session::flash('message-success', 'User banned successfully!');
