@@ -310,19 +310,7 @@ class ReplyController extends Controller
     public function reportedListView(Request $request, int $id) {
         $reply = Reply::findOrFail($id);
 
-        $page = $request->page ?? 1;
-
-        $reports = $reply->reports()->get();
-        $reports = new LengthAwarePaginator(
-            $reports->slice($page * 20 - 20, 20),
-            $reports->count(),
-            20,
-            $page,
-            [
-                'path' => $request->url(),
-                'query' => $request->query()
-            ]
-        );
+        $reports = $reply->reports()->simplePaginate(20);
 
         return view('reply.reportedListView', ['reply' => $reply, 'reports' => $reports]);
     }

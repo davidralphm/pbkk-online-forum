@@ -18,20 +18,60 @@ class QuestionController extends Controller
 {
     // Return home page
     public function index() {
-        // Most upvoted questions
-        $mostUpvoted = Question::orderByDesc('upvotes')->take(20)->get();
-        
-        // Newest questions
-        $newestQuestions = Question::latest()->take(20)->get();
+        // Yesterday time
+        $yesterdayDate = date('Y-m-d', strtotime('yesterday')) . ' 00:00:00';
 
+        // Most upvoted questions
+        $mostUpvotedQuestions = Question::select('id', 'title', 'user_id', 'upvotes')
+        ->orderByDesc('upvotes')
+        ->take(20)
+        ->get();
+        
         // Most active questions in the last 24 hours
         // Sorted based on number of replies in the last 24 hours
-        $yesterdayDate = date('Y-m-d', strtotime('yesterday'));
-
-        $mostActive = Reply::select('question_id')
-        ->whereDate('updated_at', '>=', $yesterdayDate)
+        $mostActiveQuestions = Question::select('questions.id', 'questions.title', 'questions.user_id', 'upvotes')
+        ->join('replies', 'replies.question_id', '=', 'questions.id')
+        ->whereDate('replies.updated_at', '>=', $yesterdayDate)
         ->get()
-        ->groupBy('question_id')
+        ->groupBy('id')
+        ->sortDesc()
+        ->take(20);
+
+        // Newest questions
+        $newestQuestions = Question::select('id', 'title', 'user_id', 'upvotes')
+        ->whereDate('created_at', '>=', $yesterdayDate)
+        ->orderByDesc('created_at')
+        ->take(20)
+        ->get();
+
+        // Most upvoted users of all time
+        $mostUpvotedUsers = User::select('users.id', 'users.name')
+        ->join('replies', 'replies.user_id', '=', 'users.id')
+        ->join('votes', 'votes.reply_id', '=', 'replies.id')
+        ->where('votes.type', '=', 'upvote')
+        ->get()
+        ->groupBy('id')
+        ->sortDesc()
+        ->take(20);
+
+        // Most upvoted users of in the last 24 hours
+        $mostUpvotedUsers24Hours = User::select('users.id', 'users.name')
+        ->join('replies', 'replies.user_id', '=', 'users.id')
+        ->join('votes', 'votes.reply_id', '=', 'replies.id')
+        ->where('votes.type', '=', 'upvote')
+        ->whereDate('votes.created_at', '>=', $yesterdayDate)
+        ->get()
+        ->groupBy('id')
+        ->sortDesc()
+        ->take(20);
+
+        // Most active users in the last 24 hours
+        // Sorted based on the number of replies made by each user
+        $mostActiveUsers = User::select('users.id', 'users.name', 'replies.body')
+        ->join('replies', 'replies.user_id', '=', 'users.id')
+        ->whereDate('replies.updated_at', '>=', $yesterdayDate)
+        ->get()
+        ->groupBy('id')
         ->sortDesc()
         ->take(20);
 
@@ -45,9 +85,12 @@ class QuestionController extends Controller
         return view(
             'homepage',
             [
-                'mostUpvoted' => $mostUpvoted,
+                'mostUpvotedQuestions' => $mostUpvotedQuestions,
+                'mostActiveQuestions' => $mostActiveQuestions,
                 'newestQuestions' => $newestQuestions,
-                'mostActive' => $mostActive,
+
+                'mostUpvotedUsers' => $mostUpvotedUsers,
+                'mostActiveUsers' => $mostActiveUsers,
                 'newestUsers' => $newestUsers,
             ]
         );
@@ -58,18 +101,7 @@ class QuestionController extends Controller
         $page = $request->page ?? 1;
 
         $questions = Question::where('title', 'LIKE', '%' . $request->search . '%')
-        ->get();
-
-        $questions = new LengthAwarePaginator(
-            $questions->slice($page * 20 - 20, 20),
-            $questions->count(),
-            20,
-            $page,
-            [
-                'path' => $request->url(),
-                'query' => $request->query()
-            ]
-        );
+        ->simplePaginate(20);
 
         return view('searchpage', ['questions' => $questions]);
     }
@@ -315,19 +347,7 @@ class QuestionController extends Controller
     public function reportedListView(Request $request, int $id) {
         $question = Question::findOrFail($id);
 
-        $page = $request->page ?? 1;
-
-        $reports = $question->reports()->get();
-        $reports = new LengthAwarePaginator(
-            $reports->slice($page * 20 - 20, 20),
-            $reports->count(),
-            20,
-            $page,
-            [
-                'path' => $request->url(),
-                'query' => $request->query()
-            ]
-        );
+        $reports = $question->reports()->simplePaginate(20);
 
         return view('question.reportedListView', ['question' => $question, 'reports' => $reports]);
     }

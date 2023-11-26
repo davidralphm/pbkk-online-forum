@@ -353,19 +353,7 @@ class UserController extends Controller
     public function reportedListView(Request $request, int $id) {
         $user = User::findOrFail($id);
 
-        $page = $request->page ?? 1;
-
-        $reports = $user->reports()->get();
-        $reports = new LengthAwarePaginator(
-            $reports->slice($page * 20 - 20, 20),
-            $reports->count(),
-            20,
-            $page,
-            [
-                'path' => $request->url(),
-                'query' => $request->query()
-            ]
-        );
+        $reports = $user->reports()->simplePaginate(20);
 
         return view('user.reportedListView', ['user' => $user, 'reports' => $reports]);
     }

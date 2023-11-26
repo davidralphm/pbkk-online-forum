@@ -17,7 +17,7 @@
                 <h3>{{ $item->title }}</h3>
             </a>
 
-            <h4>Asked by <a href="/user/profile/{{ $item->user->id }}">{{ $item->user->name }}</a> on {{ $item->created_at }}, {{ $item->upvotes }} upvotes</h4>
+            <h4>Asked by <a href="/user/profile/{{ $item->user->id }}">{{ $item->user->name }}</a> on {{ $item->created_at }} | {{ $item->upvotes }} upvotes | {{ $item->replies->count() }} replies</h4>
         @endforeach
     @else
         <h3>No results for '{{ Request::get('search') }}'</h3>
