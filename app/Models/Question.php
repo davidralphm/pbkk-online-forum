@@ -34,4 +34,9 @@ class Question extends Model
     public function userReport() {
         return ReportedQuestion::where('reported_id', $this->id)->where('user_id', Auth::id())->first();
     }
+
+    // Return all the reports for this question
+    public function reports() : HasMany {
+        return $this->hasMany(ReportedQuestion::class, 'reported_id');
+    }
 }

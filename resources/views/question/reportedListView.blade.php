@@ -51,5 +51,15 @@
     @else
         <h2>There are no reports for this question</h2>
     @endif
+
+    <!-- Navigation links -->
+
+    @if ($reports->onFirstPage() == false)
+        <a href="{{ $reports->previousPageUrl() }}">Previous</a>
+    @endif
+
+    @if ($reports->onLastPage() == false)
+        <a href="{{ $reports->nextPageUrl() }}">Next</a>
+    @endif
 </body>
 </html>

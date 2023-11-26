@@ -62,4 +62,9 @@ class User extends Authenticatable
     public function userReport() {
         return ReportedUser::where('reported_id', $this->id)->where('user_id', Auth::id())->first();
     }
+
+    // Return all the reports for this user
+    public function reports() : HasMany {
+        return $this->hasMany(ReportedUser::class, 'reported_id');
+    }
 }

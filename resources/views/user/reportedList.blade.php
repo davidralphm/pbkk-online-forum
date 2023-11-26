@@ -36,5 +36,13 @@
     @else
         <h2>There are no reported users</h2>
     @endif
+
+    @if ($reported->onFirstPage() == false)
+        <a href="{{ $reported->previousPageUrl() }}">Previous</a>
+    @endif
+
+    @if ($reported->onLastPage() == false)
+        <a href="{{ $reported->nextPageUrl() }}">Next</a>
+    @endif
 </body>
 </html>

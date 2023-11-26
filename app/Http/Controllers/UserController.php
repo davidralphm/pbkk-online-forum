@@ -7,7 +7,9 @@ use App\Models\ReportedReply;
 use App\Models\ReportedUser;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Session;
 
 use function PHPUnit\Framework\isEmpty;
@@ -329,26 +331,41 @@ class UserController extends Controller
 
     // Function to show all reported users
     public function reportedList(Request $request) {
-        $page = max(0, $request->page - 1);
+        $page = $request->page ?? 1;
 
-        $reported = ReportedUser::offset($page * 20)
-        ->limit(20)
-        ->get()
-        ->groupBy('reported_id')
-        ->sortDesc();
+        $reported = ReportedUser::all()->groupBy('reported_id')->sortDesc();
+
+        $reported = new LengthAwarePaginator(
+            $reported->slice($page * 20 - 20, 20),
+            $reported->count(),
+            20,
+            $page,
+            [
+                'path' => $request->url(),
+                'query' => $request->query()
+            ]
+        );
 
         return view('user.reportedList', ['reported' => $reported]);
     }
 
     // Function to show all the reports for a reported user
     public function reportedListView(Request $request, int $id) {
-        $page = max(0, $request->page - 1);
-
         $user = User::findOrFail($id);
-        $reports = ReportedUser::where('reported_id', $id)
-        ->offset($page * 20)
-        ->limit(20)
-        ->get();
+
+        $page = $request->page ?? 1;
+
+        $reports = $user->reports()->get();
+        $reports = new LengthAwarePaginator(
+            $reports->slice($page * 20 - 20, 20),
+            $reports->count(),
+            20,
+            $page,
+            [
+                'path' => $request->url(),
+                'query' => $request->query()
+            ]
+        );
 
         return view('user.reportedListView', ['user' => $user, 'reports' => $reports]);
     }
@@ -357,12 +374,18 @@ class UserController extends Controller
     public function ban(Request $request, int $id) {
         $user = User::findOrFail($id);
 
+        // Authorization
+        Gate::authorize('is-admin');
+
         return view('user.ban', ['user' => $user]);
     }
 
     // Function to ban a user
     public function banPost(Request $request, int $id) {
         $user = User::findOrFail($id);
+
+        // Authorization
+        Gate::authorize('is-admin');
 
         $validated = $request->validate(
             ['banned_until' => 'required|date'],
@@ -384,6 +407,9 @@ class UserController extends Controller
     // Function to unban a user
     public function unban(Request $request, int $id) {
         $user = User::findOrFail($id);
+
+        // Authorization
+        Gate::authorize('is-admin');
 
         $user->banned = false;
         $user->save();

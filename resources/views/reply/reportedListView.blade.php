@@ -49,5 +49,13 @@
     @else
         <h2>There are no reports for this reply</h2>
     @endif
+
+    @if ($reports->onFirstPage() == false)
+        <a href="{{ $reports->previousPageUrl() }}">Previous</a>
+    @endif
+
+    @if ($reports->onLastPage() == false)
+        <a href="{{ $reports->nextPageUrl() }}">Next</a>
+    @endif
 </body>
 </html>

@@ -7,8 +7,11 @@ use App\Models\Reply;
 use App\Models\ReportedQuestion;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Session;
 
 class QuestionController extends Controller
@@ -52,12 +55,21 @@ class QuestionController extends Controller
 
     // Search page
     public function search(Request $request) {
-        $page = max(0, $request->page - 1);
+        $page = $request->page ?? 1;
 
         $questions = Question::where('title', 'LIKE', '%' . $request->search . '%')
-        ->offset($page * 20)
-        ->limit(20)
         ->get();
+
+        $questions = new LengthAwarePaginator(
+            $questions->slice($page * 20 - 20, 20),
+            $questions->count(),
+            20,
+            $page,
+            [
+                'path' => $request->url(),
+                'query' => $request->query()
+            ]
+        );
 
         return view('searchpage', ['questions' => $questions]);
     }
@@ -85,6 +97,7 @@ class QuestionController extends Controller
 
         $question->user_id = Auth::id();
         $question->title = $request->title;
+        $question->upvotes = 0;
 
         $question->save();
 
@@ -101,7 +114,7 @@ class QuestionController extends Controller
         return redirect('/question/view/' . $question->id);
     }
 
-    // Show the first page of a question
+    // Show a question
     public function view(int $id) {
         $question = Question::findOrFail($id);
 
@@ -109,20 +122,7 @@ class QuestionController extends Controller
         //     return back()->withErrors('Question not found!');
         // }
 
-        $replies = $question->replies()->limit(20)->get();
-
-        return view('question.view', ['question' => $question, 'replies' => $replies]);
-    }
-
-    // Show a specific page of a question
-    public function viewPage(int $id, int $page) {
-        $question = Question::findOrFail($id);
-
-        // if (empty($question)) {
-        //     return back()->withErrors('Question not found!');
-        // }
-
-        $replies = $question->replies()->offset($page * 20)->limit(20)->get();
+        $replies = $question->replies()->simplePaginate(20);
 
         return view('question.view', ['question' => $question, 'replies' => $replies]);
     }
@@ -165,6 +165,11 @@ class QuestionController extends Controller
         //     return back()->withErrors('Question not found!');
         // }
 
+        // Authorization
+        if (Gate::none(['is-question-owner', 'is-admin'], $question)) {
+            abort(401);
+        }
+
         return view('question.edit', ['question' => $question]);
     }
 
@@ -175,6 +180,11 @@ class QuestionController extends Controller
         // if (empty($question)) {
         //     return back()->withErrors('Question not found!');
         // }
+
+        // Authorization
+        if (Gate::none(['is-question-owner', 'is-admin'], $question)) {
+            abort(401);
+        }
 
         $validated = $request->validate(
             ['title' => 'required'],
@@ -196,6 +206,11 @@ class QuestionController extends Controller
         //     return back()->withErrors('Question not found!');
         // }
 
+        // Authorization
+        if (Gate::none(['is-question-owner', 'is-admin'], $question)) {
+            abort(401);
+        }
+
         $question->locked = true;
         $question->save();
 
@@ -210,6 +225,11 @@ class QuestionController extends Controller
         // if (empty($question)) {
         //     return back()->withErrors('Question not found!');
         // }
+
+        // Authorization
+        if (Gate::none(['is-question-owner', 'is-admin'], $question)) {
+            abort(401);
+        }
 
         $question->locked = false;
         $question->save();
@@ -272,26 +292,42 @@ class QuestionController extends Controller
 
     // Function to show all reported questions
     public function reportedList(Request $request) {
-        $page = max(0, $request->page - 1);
+        // Manual pagination
+        $page = $request->page ?? 1;
 
-        $reported = ReportedQuestion::offset($page * 20)
-        ->limit(20)
-        ->get()
-        ->groupBy('reported_id')
-        ->sortDesc();
+        $reported = ReportedQuestion::all()->groupBy('reported_id')->sortDesc();
+
+        $reported = new LengthAwarePaginator(
+            $reported->slice($page * 20 - 20, 20),
+            $reported->count(),
+            20,
+            $page,
+            [
+                'path' => $request->url(),
+                'query' => $request->query()
+            ]
+        );
 
         return view('question.reportedList', ['reported' => $reported]);
     }
 
     // Function to show all the reports for a reported question
     public function reportedListView(Request $request, int $id) {
-        $page = max(0, $request->page - 1);
-
         $question = Question::findOrFail($id);
-        $reports = ReportedQuestion::where('reported_id', $id)
-        ->offset($page * 20)
-        ->limit(20)
-        ->get();
+
+        $page = $request->page ?? 1;
+
+        $reports = $question->reports()->get();
+        $reports = new LengthAwarePaginator(
+            $reports->slice($page * 20 - 20, 20),
+            $reports->count(),
+            20,
+            $page,
+            [
+                'path' => $request->url(),
+                'query' => $request->query()
+            ]
+        );
 
         return view('question.reportedListView', ['question' => $question, 'reports' => $reports]);
     }

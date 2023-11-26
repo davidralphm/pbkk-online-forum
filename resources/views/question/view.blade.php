@@ -124,5 +124,14 @@
         <h3>This question has been locked</h3>
         <h3>You cannot reply to it</h3>
     @endif
+
+    <!-- Previous and next page links -->
+    @if (!$replies->onFirstPage())
+        <a href="{{ $replies->previousPageUrl() }}">Previous</a>
+    @endif
+
+    @if (!$replies->onLastPage())
+        <a href="{{ $replies->nextPageUrl() }}">Next</a>
+    @endif
 </body>
 </html>

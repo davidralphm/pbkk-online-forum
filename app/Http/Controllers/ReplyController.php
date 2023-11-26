@@ -6,7 +6,9 @@ use App\Models\Reply;
 use App\Models\ReportedReply;
 use App\Models\Vote;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Session;
 
 class ReplyController extends Controller
@@ -19,6 +21,11 @@ class ReplyController extends Controller
         //     return back()->withErrors('Reply not found!');
         // }
 
+        // Authorization
+        if (Gate::none(['is-reply-owner', 'is-admin'], $reply)) {
+            abort(401);
+        }
+
         return view('reply.edit', ['reply' => $reply]);
     }
 
@@ -29,6 +36,11 @@ class ReplyController extends Controller
         // if (empty($reply)) {
         //     return back()->withErrors('Reply not found!');
         // }
+
+        // Authorization
+        if (Gate::none(['is-reply-owner', 'is-admin'], $reply)) {
+            abort(401);
+        }
 
         $validated = $request->validate(
             ['body' => 'required'],
@@ -50,6 +62,11 @@ class ReplyController extends Controller
         //     return back()->withErrors('Reply not found!');
         // }
 
+        // Authorization
+        if (Gate::none(['is-reply-owner', 'is-admin'], $reply)) {
+            abort(401);
+        }
+
         // Set deleted flag to true
         $reply->deleted = true;
         $reply->save();
@@ -65,6 +82,9 @@ class ReplyController extends Controller
         // if (empty($reply)) {
         //     return back()->withErrors('Reply not found!');
         // }
+
+        // Authorization (only admin can undelete a reply)
+        Gate::authorize('is-admin');
 
         // Set deleted flag to true
         $reply->deleted = false;
@@ -268,26 +288,41 @@ class ReplyController extends Controller
 
     // Function to show all reported replies
     public function reportedList(Request $request) {
-        $page = max(0, $request->page - 1);
+        $page = $request->page ?? 1;
 
-        $reported = ReportedReply::offset($page * 20)
-        ->limit(20)
-        ->get()
-        ->groupBy('reported_id')
-        ->sortDesc();
+        $reported = ReportedReply::all()->groupBy('reported_id')->sortDesc();
+
+        $reported = new LengthAwarePaginator(
+            $reported->slice($page * 20 - 20, 20),
+            $reported->count(),
+            20,
+            $page,
+            [
+                'path' => $request->url(),
+                'query' => $request->query()
+            ]
+        );
 
         return view('reply.reportedList', ['reported' => $reported]);
     }
 
     // Function to show all the reports for a reported reply
     public function reportedListView(Request $request, int $id) {
-        $page = max(0, $request->page - 1);
-
         $reply = Reply::findOrFail($id);
-        $reports = ReportedReply::where('reported_id', $id)
-        ->offset($page * 20)
-        ->limit(20)
-        ->get();
+
+        $page = $request->page ?? 1;
+
+        $reports = $reply->reports()->get();
+        $reports = new LengthAwarePaginator(
+            $reports->slice($page * 20 - 20, 20),
+            $reports->count(),
+            20,
+            $page,
+            [
+                'path' => $request->url(),
+                'query' => $request->query()
+            ]
+        );
 
         return view('reply.reportedListView', ['reply' => $reply, 'reports' => $reports]);
     }
