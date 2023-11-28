@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Homepage route
-Route::get('/', ['\App\Http\Controllers\QuestionController', 'index'])->name('homepage');
+// Route::get('/', ['\App\Http\Controllers\QuestionController', 'index'])->name('homepage');
 
 // Searchpage route
 Route::get('/search', ['\App\Http\Controllers\QuestionController', 'search'])->name('searchpage');
@@ -34,8 +34,13 @@ Route::get('/logout', ['\App\Http\Controllers\UserController', 'logout']);
 Route::prefix('/user')->name('user.')->group(
     function() {
         // Dashboard
-        Route::get('dashboard', ['\App\Http\Controllers\UserController', 'dashboard'])->name('dashboard')->middleware('auth');
-        
+        Route::get('home', ['\App\Http\Controllers\QuestionController', 'index'])->name('homepage')->middleware('auth');
+        // Route::get('dashboard', ['\App\Http\Controllers\UserController', 'dashboard'])->name('dashboard')->middleware('auth');
+
+        // View own profile
+        Route::get('/profile', ['\App\Http\Controllers\UserController', 'dashboard'])->name('dashboard')->middleware('auth');
+
+
         // View profile
         Route::get('/profile/{id}', ['\App\Http\Controllers\UserController', 'profile'])->name('profile');
 

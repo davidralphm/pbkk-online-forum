@@ -102,7 +102,8 @@ class UserController extends Controller
 
             $request->session()->regenerate();
 
-            return redirect()->intended('/user/dashboard');
+            // return redirect()->intended('/user/dashboard');
+            return redirect()->intended('/user/home');
         }
 
         // Jika authentication tidak berhasil
@@ -129,6 +130,13 @@ class UserController extends Controller
 
         return view('user.profile', ['user' => $user]);
     }
+
+    // // view own profile
+    // public function ownProfile() {
+    //     // $user = $request->user();
+
+    //     return view('user.dashboard', ['user' => $user]);
+    // }
 
     // Return dashboard view
     public function dashboard() {
@@ -207,7 +215,7 @@ class UserController extends Controller
 
         $user->save();
 
-        return redirect('/user/dashboard');
+        return redirect('/user/profile');
     }
 
     // Change password
@@ -233,7 +241,7 @@ class UserController extends Controller
         $user->save();
 
         Session::flash('message-success', 'Password berhasil diubah!');
-        return redirect('/user/dashboard');
+        return redirect('/user/profile');
     }
 
     // Delete account
@@ -274,7 +282,7 @@ class UserController extends Controller
         $user->save();
 
         Session::flash('message-success', 'Gambar profile berhasil dihapus!');
-        return redirect('/user/dashboard');
+        return redirect('/user/profile');
     }
 
     // Function to report a user
