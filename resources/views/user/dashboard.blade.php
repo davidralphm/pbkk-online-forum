@@ -3,8 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{{ asset("css/dashboard.css") }}">
+    {{-- <style>
+        section {
+        background: #659DBD;
+        color: #ffffff; /* Sesuaikan warna teks agar cocok dengan latar belakang */
+        }
+    </style> --}}
+
+
 
 </head>
 <body>
@@ -18,7 +28,7 @@
         <b>{{ Session::get('message-success') }}</b>
     @endif
 
-    <section style="background-color: rgb(0, 60, 109);">
+    <section>
         <div class="container py-5">
           <div class="row">
             <div class="col">
@@ -55,7 +65,7 @@
                 <div class="card-body">
                   <div class="row">
                     <div class="col-sm-3">
-                      <p class="mb-0">Name</p>
+                      <p class="mb-0 fw-bold">Name</p>
                     </div>
                     <div class="col-sm-9">
                       {{-- <b>Name : {{ $user->name }}</b><br><hr> --}}
@@ -65,7 +75,7 @@
                   <hr>
                   <div class="row">
                     <div class="col-sm-3">
-                      <p class="mb-0">Email</p>
+                      <p class="mb-0 fw-bold">Email</p>
                     </div>
                     <div class="col-sm-9">
                       <p class="text-muted mb-0">{{ $user->email }}</p>
@@ -74,7 +84,7 @@
                   <hr>
                   <div class="row">
                     <div class="col-sm-3">
-                      <p class="mb-0">Role</p>
+                      <p class="mb-0 fw-bold">Role</p>
                     </div>
                     <div class="col-sm-9">
                       <p class="text-muted mb-0">{{ $user->role }}</p>
@@ -83,7 +93,7 @@
                   <hr>
                   <div class="row">
                     <div class="col-sm-3">
-                      <p class="mb-0">About</p>
+                      <p class="mb-0 fw-bold">About</p>
                     </div>
                     <div class="col-sm-9">
                       <p class="text-muted mb-0">{{ $user->about }}</p>
@@ -92,7 +102,7 @@
                   <hr>
                   <div class="row">
                     <div class="col-sm-3">
-                      <p class="mb-0">Image URL</p>
+                      <p class="mb-0 fw-bold">Image URL</p>
                     </div>
                     <div class="col-sm-9">
                       <p class="text-muted mb-0">{{ $user->image_url }}</p>
@@ -177,7 +187,7 @@
                                 @else
                                     value="{{ $user->name }}"
                                 @endif
-                            ><br><br>
+                            class="input_box"><br><br>
 
                             <textarea name="about" id="about" cols="30" rows="10" placeholder="About">@if (old('about')){{ old('about') }}@else{{ $user->about }}@endif</textarea><br><br>
 
@@ -202,9 +212,9 @@
                             <form action="/user/changePassword" method="post">
                                 {{ csrf_field() }}
 
-                                <input type="password" name="password" id="password" placeholder="Current password"><br><br>
-                                <input type="password" name="new_password" id="new_password" placeholder="New password"><br><br>
-                                <input type="password" name="new_password_confirmation" id="new_password_confirmation" placeholder="Confirm new password"><br><br>
+                                <input type="password" name="password" id="password" placeholder="Current password" class="input_box"><br><br>
+                                <input type="password" name="new_password" id="new_password" placeholder="New password" class="input_box"><br><br>
+                                <input type="password" name="new_password_confirmation" id="new_password_confirmation" placeholder="Confirm new password" class="input_box"><br><br>
 
                                 <input type="submit" value="Change Password">
                             </form><hr>
@@ -223,7 +233,7 @@
                             <form action="/user/deleteAccount" method="post">
                                 {{ csrf_field() }}
 
-                                <input type="password" name="password" id="password" placeholder="Enter password"><br><br>
+                                <input type="password" name="password" id="password" placeholder="Enter password" class="input_box"><br><br>
 
                                 <input type="submit" value="Delete Account">
                             </form><hr>
