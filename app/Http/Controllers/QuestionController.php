@@ -22,11 +22,13 @@ class QuestionController extends Controller
         $yesterdayDate = date('Y-m-d', strtotime('yesterday')) . ' 00:00:00';
 
         // Most upvoted questions
-        $mostUpvotedQuestions = Question::select('id', 'title', 'user_id', 'upvotes')
+        $mostUpvotedQuestions = Question::select('questions.id', 'questions.title', 'questions.user_id', 'questions.upvotes')
+        ->leftJoin('replies', 'replies.question_id', '=', 'questions.id')
+        ->groupBy('questions.id')
         ->orderByDesc('upvotes')
         ->take(20)
         ->get();
-        
+
         // Most active questions in the last 24 hours
         // Sorted based on number of replies in the last 24 hours
         $mostActiveQuestions = Question::select('questions.id', 'questions.title', 'questions.user_id', 'upvotes')
@@ -81,7 +83,7 @@ class QuestionController extends Controller
         ->orderByDesc('created_at')
         ->get()
         ->take(20);
-        
+
         return view(
             'homepage',
             [
