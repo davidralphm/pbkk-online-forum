@@ -35,14 +35,16 @@ class QuestionController extends Controller
         ->join('replies', 'replies.question_id', '=', 'questions.id')
         ->whereDate('replies.updated_at', '>=', $yesterdayDate)
         ->get()
-        ->groupBy('id')
+        ->groupBy('questions.id')
         ->sortDesc()
         ->take(20);
 
         // Newest questions
-        $newestQuestions = Question::select('id', 'title', 'user_id', 'upvotes')
-        ->whereDate('created_at', '>=', $yesterdayDate)
-        ->orderByDesc('created_at')
+        $newestQuestions = Question::select('questions.id', 'questions.title', 'questions.user_id', 'upvotes')
+        ->join('replies', 'replies.question_id', '=', 'questions.id')
+        ->whereDate('questions.created_at', '>=', $yesterdayDate)
+        ->groupBy('questions.id')
+        ->orderByDesc('questions.created_at')
         ->take(20)
         ->get();
 

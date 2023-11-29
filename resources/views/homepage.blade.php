@@ -28,6 +28,12 @@
               </a>
             </li>
 
+            <li class="nav-item">
+                <a class="nav-link disabled" href="/question/create">
+                    <button type="button" class="btn btn-outline-success btn-sm">Create Post</button>
+                </a>
+            </li>
+
             {{-- <li class="nav-item">
               <a class="nav-link disabled" href="#">
                 <i class="fa fa-envelope-o">
@@ -88,20 +94,29 @@
             <hr>
 
             @foreach ($mostUpvotedQuestions as $key => $question)
-            <a href="/question/view/{{ $question->id }}">
-                <h3>{{ $question->title }}</h3>
-                {{-- <h4>{{ $question->replies->body }}</h4> --}}
-                @if ($question->replies->count() > 0)
-                    <h4>{{ $question->replies->first()->body }}</h4>
-                @else
-                    continue;
-                @endif
-            </a>
+            <div class="card mb-4">
+                <div class="card-body text">
+                    <a href="/question/view/{{ $question->id }}">
+                        <h3>{{ $question->title }}</h3>
+                        {{-- <p>{{ $question->replies->body }}</p> --}}
+                        @if ($question->replies->count() > 0)
+                            <p>{{ $question->replies->first()->body }}</p>
+                        @else
+                            continue;
+                        @endif
+                    </a>
 
-            <h5>Asked by <a href="/user/profile/{{ $question->user->id }}">{{ $question->user->name }}</a> | {{ $question->upvotes }} upvotes | {{ $question->replies->count() }} replies</h5>
-
-            <br>
+                    <h5>Asked by <a href="/user/profile/{{ $question->user->id }}">{{ $question->user->name }}</a> | {{ $question->upvotes }} upvotes | {{ $question->replies->count() }} replies</h5>
+                    <br>
+                </div>
+            </div>
             @endforeach
+
+            <div class="card mb-4">
+                <div class="card-body text">
+
+                </div>
+            </div>
 
         </div>
 
@@ -111,13 +126,22 @@
             <hr>
 
             @foreach ($mostActiveQuestions as $value)
-                <a href="/question/view/{{ $value[0]->id }}">
-                    <h3>{{ $value[0]->title }}</h3>
-                </a>
+                <div class="card mb-4">
+                    <div class="card-body text">
+                        <a href="/question/view/{{ $value[0]->id }}">
+                            <h3>{{ $value[0]->title }}</h3>
+                            @if ($question->replies->count() > 0)
+                                <p>{{ $value[0]->replies->first()->body }}</p>
+                            @else
+                                continue;
+                            @endif
+                        </a>
 
-                <h5>Asked by <a href="/user/profile/{{ $value[0]->user->id }}">{{ $value[0]->user->name }}</a> | {{ $value[0]->upvotes }} upvotes | {{ count($value) }} new replies</h5>
+                        <h5>Asked by <a href="/user/profile/{{ $value[0]->user->id }}">{{ $value[0]->user->name }}</a> | {{ $value[0]->upvotes }} upvotes | {{ count($value) }} new replies</h5>
 
-                <br>
+                        <br>
+                    </div>
+                </div>
             @endforeach
         </div>
 
@@ -127,13 +151,23 @@
             <hr>
 
             @foreach ($newestQuestions as $key => $value)
-                <a href="/question/view/{{ $value->id }}">
-                    <h3>{{ $value->title }}</h3>
-                </a>
+                <div class="card mb-4">
+                    <div class="card-body text">
+                        <a href="/question/view/{{ $value->id }}">
+                            <h3>{{ $value->title }}</h3>
+                            @if ($question->replies->count() > 0)
+                                <p>{{ $value->replies->first()->body }}</p>
+                            @else
+                                continue;
+                            @endif
+                        </a>
 
-                <h5>Asked by <a href="/user/profile/{{ $value->user->id }}">{{ $value->user->name }}</a> | {{ $value->upvotes }} upvotes | {{ $value->replies->count() }} replies</h5>
+                        <h5>Asked by <a href="/user/profile/{{ $value->user->id }}">{{ $value->user->name }}</a> | {{ $value->upvotes }} upvotes | {{ $value->replies->count() }} replies</h5>
 
-                <br>
+                        <br>
+                    </div>
+                </div>
+
             @endforeach
         </div>
 
@@ -143,13 +177,19 @@
             <hr>
 
             @foreach ($mostUpvotedUsers as $item)
-                <a href="/user/profile/{{ $item[0]->id }}">
-                    <h3>{{ $item[0]->name }}</h3>
-                </a>
+                <div class="card mb-4">
+                    <div class="card-body text">
+                        <a href="/user/profile/{{ $item[0]->id }}">
+                            <h3>{{ $item[0]->name }}</h3>
+                        </a>
 
-                <p>{{ count($item) }} new upvotes</p>
+                        <p>{{ count($item) }} new upvotes</p>
 
-                <br>
+                        <br>
+                    </div>
+                </div>
+
+
             @endforeach
         </div>
 
@@ -159,13 +199,18 @@
             <hr>
 
             @foreach ($mostActiveUsers as $item)
-                <a href="/user/profile/{{ $item[0]->id }}">
-                    <h3>{{ $item[0]->name }}</h3>
-                </a>
+                <div class="card mb-4">
+                    <div class="card-body text">
+                        <a href="/user/profile/{{ $item[0]->id }}">
+                            <h3>{{ $item[0]->name }}</h3>
+                        </a>
 
-                <p>{{ count($item) }} new replies posted</p>
+                        <p>{{ count($item) }} new replies posted</p>
 
-                <br>
+                        <br>
+                    </div>
+                </div>
+
             @endforeach
         </div>
 
@@ -175,13 +220,18 @@
             <hr>
 
             @foreach ($newestUsers as $key => $value)
-                <a href="/user/profile/{{ $value->id }}">
-                    <h3>{{ $value->name }}</h3>
-                </a>
+                <div class="card mb-4">
+                    <div class="card-body text">
+                        <a href="/user/profile/{{ $value->id }}">
+                            <h3>{{ $value->name }}</h3>
+                        </a>
 
-                <p>Joined on {{ $value->created_at }}</p>
+                        <p>Joined on {{ $value->created_at }}</p>
 
-                <br>
+                        <br>
+                    </div>
+                </div>
+
             @endforeach
         </div>
     </div>

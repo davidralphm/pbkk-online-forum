@@ -82,6 +82,11 @@
 
                   </div>
 
+                  <div>
+                    <p class="mb-0">Do you have an account? <a href="/login" class="text-white-50 fw-bold">Sign In</a>
+                    </p>
+                  </div>
+
                 </div>
               </div>
             </div>
