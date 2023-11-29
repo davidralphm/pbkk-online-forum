@@ -128,7 +128,7 @@
 
 {{-- -------------- Data Diri --------------------------- --}}
 
-            <div class="card mb-4 col-md-8">
+            <div class="card mb-4 col-md-8 border-0">
                 <div class="card-body">
                   <div class="row">
                     <div class="col-sm-3">

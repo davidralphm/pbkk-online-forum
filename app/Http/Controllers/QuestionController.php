@@ -160,6 +160,7 @@ class QuestionController extends Controller
 
         $replies = $question->replies()->simplePaginate(20);
 
+
         return view('question.view', ['question' => $question, 'replies' => $replies]);
     }
 

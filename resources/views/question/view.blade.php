@@ -18,16 +18,22 @@
 
     <!-- Question title -->
     <h1>{{ $question->title }}</h1>
+    <h4>{{ $replies->first()->body }}</h4>
 
     @if ($question->user != null)
-        <h4>Posted on {{ $question->created_at }} by {{ $question->user->name }}</h4>
+        @if ($question->created_at != $question->updated_at)
+            <h5>Edited on {{ $question->updated_at }}</h5>
+        @else
+            <h4>{{ $question->created_at->format('d M y') }}-{{ $question->user->name }}</h4>
+        @endif
+
     @else
-        <h4>Posted on {{ $question->created_at }} by [Deleted User]</h4>
+        <h4>Posted on {{ $question->created_at->format('d M y') }}-[Deleted User]</h4>
     @endif
 
-    @if ($question->created_at != $question->updated_at)
+    {{-- @if ($question->created_at != $question->updated_at)
         <h5>Edited on {{ $question->updated_at }}</h5>
-    @endif
+    @endif --}}
 
     @if ($question->locked == true)
         <em>This question has been locked</em>
@@ -43,6 +49,26 @@
 
     @if ($question->userReport() == null)
         <a href="/question/report/{{ $question->id }}">Report</a>
+        @foreach ($replies as $key => $value)
+            @if ($loop->first)
+                @if ($value->userVote() != null)
+                    @if ($value->userVote()->type == 'upvote')
+                        <em>You upvoted this reply</em>
+                        <a href="/reply/downvote/{{ $value->id }}">Downvote</a>
+                    @else
+                        <em>You downvoted this reply</em>
+                        <a href="/reply/upvote/{{ $value->id }}">Upvote</a>
+                    @endif
+
+                    <a href="/reply/unvote/{{ $value->id }}">Remove vote</a>
+                @else
+                    <a href="/reply/upvote/{{ $value->id }}">Upvote</a>
+                    <a href="/reply/downvote/{{ $value->id }}">Downvote</a>
+                @endif
+            @else
+                @break
+            @endif
+        @endforeach
     @else
         <a href="/question/removeReport/{{ $question->id }}">Remove Report</a>
     @endif
@@ -51,6 +77,9 @@
 
     <!-- Replies -->
     @foreach ($replies as $key => $value)
+        @if ($loop->first)
+            @continue
+        @endif
         <!-- Handle deleted user -->
         @if ($value->user != null)
             <h4>{{ $value->user->name }} wrote on {{ $value->created_at }}</h4>
@@ -76,7 +105,7 @@
                     <em>You downvoted this reply</em>
                     <a href="/reply/upvote/{{ $value->id }}">Upvote</a>
                 @endif
-                
+
                 <a href="/reply/unvote/{{ $value->id }}">Remove vote</a>
             @else
                 <a href="/reply/upvote/{{ $value->id }}">Upvote</a>
@@ -133,5 +162,25 @@
     @if (!$replies->onLastPage())
         <a href="{{ $replies->nextPageUrl() }}">Next</a>
     @endif
+
+    <script>
+        // Tanggal dan waktu dari PHP Blade
+        var dateTimeString = "{{ $question->created_at }}";
+        var dateTime = new Date(dateTimeString);
+
+        // Mengonversi format tanggal
+        var optionsDate = { day: '2-digit', month: 'short', year: '2-digit' };
+        var formattedDate = dateTime.toLocaleDateString('en-US', optionsDate); // '28 Nov 23'
+
+        // Menyusun hasil
+        var result = formattedDate;
+
+        // Menampilkan hasil di console atau di HTML sesuai kebutuhan Anda
+        console.log(result);
+
+        // Jika ingin menampilkan hasil di HTML, tambahkan elemen HTML yang sesuai
+        // contohnya:
+        // document.getElementById('result').innerHTML = result;
+    </script>
 </body>
 </html>
