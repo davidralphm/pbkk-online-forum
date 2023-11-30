@@ -22,7 +22,7 @@ class QuestionController extends Controller
         $yesterdayDate = date('Y-m-d', strtotime('yesterday')) . ' 00:00:00';
 
         // Most upvoted questions
-        $mostUpvotedQuestions = Question::select('questions.id', 'questions.title', 'questions.user_id', 'questions.upvotes')
+        $mostUpvotedQuestions = Question::select('questions.id', 'questions.title', 'questions.user_id', 'questions.upvotes', 'questions.created_at', 'questions.updated_at')
         ->leftJoin('replies', 'replies.question_id', '=', 'questions.id')
         ->groupBy('questions.id')
         ->orderByDesc('upvotes')
@@ -31,7 +31,7 @@ class QuestionController extends Controller
 
         // Most active questions in the last 24 hours
         // Sorted based on number of replies in the last 24 hours
-        $mostActiveQuestions = Question::select('questions.id', 'questions.title', 'questions.user_id', 'upvotes')
+        $mostActiveQuestions = Question::select('questions.id', 'questions.title', 'questions.user_id', 'upvotes', 'questions.created_at', 'questions.updated_at')
         ->join('replies', 'replies.question_id', '=', 'questions.id')
         ->whereDate('replies.updated_at', '>=', $yesterdayDate)
         ->get()
@@ -40,7 +40,7 @@ class QuestionController extends Controller
         ->take(20);
 
         // Newest questions
-        $newestQuestions = Question::select('questions.id', 'questions.title', 'questions.user_id', 'upvotes')
+        $newestQuestions = Question::select('questions.id', 'questions.title', 'questions.user_id', 'upvotes', 'questions.created_at', 'questions.updated_at')
         ->join('replies', 'replies.question_id', '=', 'questions.id')
         ->whereDate('questions.created_at', '>=', $yesterdayDate)
         ->groupBy('questions.id')
@@ -159,6 +159,7 @@ class QuestionController extends Controller
         // }
 
         $replies = $question->replies()->simplePaginate(20);
+
 
 
         return view('question.view', ['question' => $question, 'replies' => $replies]);

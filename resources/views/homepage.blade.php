@@ -94,11 +94,54 @@
             <hr>
 
             @foreach ($mostUpvotedQuestions as $key => $question)
-            <div class="card mb-4">
+            <div class="card mb-2">
                 <div class="card-body text">
-                    <a href="/question/view/{{ $question->id }}">
+                    {{-- ======================================================================= --}}
+                            <div  style="display: flex; align-items: center;">
+
+                                @if (!empty($question->user->image_url) && $question->user->image_url !== '')
+
+                                    <a class="nav-link disabled" href="/user/profile/{{ $question->user->id }}">
+                                        <img src="/storage/uploads/{{ $question->user->image_url }}" alt="Profile Image" style="max-width: 60px; border-radius: 50%; margin-right: 10px" >
+                                    </a>
+
+                                @else
+                                    {{-- Gunakan foto default jika foto profil tidak ada --}}
+                                    <img src="/storage/defaults/default-profile.jpg" alt="Default Image" style="max-width: 70px; border-radius: 50%; margin-right: 10px"><br><br>
+                                @endif
+
+
+                                <div>
+                                    <a href="/user/profile/{{ $question->user->id }}">
+                                        <h4 style="text-transform: capitalize; margin-bottom: 0; font-size: 20px; color: black;">{{ $question->user->name }}</h4>
+                                    </a>
+
+                                    @if ($question->user != null)
+                                        <h7 style="font-size: 14px; font-weight: normal;">Wrote on {{ $question->created_at->format('d M y . H:i') }}</h7><br>
+                                    @else
+                                        <h4>Posted on {{ $question->created_at }}-[Deleted User]</h4>
+                                    @endif
+                                </div>
+                            </div>
+                            <hr style="2px solid">
+
+                            <a href="/question/view/{{ $question->id }}">
+                                <h3 style="color: black;">{{ $question->title }}</h3>
+                                @if ($question->replies->count() > 0)
+                                    <p style="color: black;">{{ $question->replies->first()->body }}</p>
+                                @else
+                                    continue;
+                                @endif
+                            </a>
+
+                            <div>
+                                <h5>{{ $question->upvotes }} upvotes | {{ $question->replies->count() }} replies</h5>
+                                <br>
+                            </div>
+
+                    {{-- ======================================================================= --}}
+                    {{-- <a href="/question/view/{{ $question->id }}">
                         <h3>{{ $question->title }}</h3>
-                        {{-- <p>{{ $question->replies->body }}</p> --}}
                         @if ($question->replies->count() > 0)
                             <p>{{ $question->replies->first()->body }}</p>
                         @else
@@ -107,16 +150,10 @@
                     </a>
 
                     <h5>Asked by <a href="/user/profile/{{ $question->user->id }}">{{ $question->user->name }}</a> | {{ $question->upvotes }} upvotes | {{ $question->replies->count() }} replies</h5>
-                    <br>
+                    <br> --}}
                 </div>
             </div>
             @endforeach
-
-            <div class="card mb-4">
-                <div class="card-body text">
-
-                </div>
-            </div>
 
         </div>
 
@@ -128,7 +165,53 @@
             @foreach ($mostActiveQuestions as $value)
                 <div class="card mb-4">
                     <div class="card-body text">
+
+                        {{-- ================================================ --}}
+
+                        <div  style="display: flex; align-items: center;">
+
+                            @if (!empty($value[0]->user->image_url) && $value[0]->user->image_url !== '')
+
+                                <a class="nav-link disabled" href="/user/profile/{{ $value[0]->user->id }}">
+                                    <img src="/storage/uploads/{{ $value[0]->user->image_url }}" alt="Profile Image" style="max-width: 60px; border-radius: 50%; margin-right: 10px" >
+                                </a>
+
+                            @else
+                                {{-- Gunakan foto default jika foto profil tidak ada --}}
+                                <img src="/storage/defaults/default-profile.jpg" alt="Default Image" style="max-width: 70px; border-radius: 50%; margin-right: 10px"><br><br>
+                            @endif
+
+
+                            <div>
+                                <a href="/user/profile/{{ $value[0]->user->id }}">
+                                    <h4 style="text-transform: capitalize; margin-bottom: 0; font-size: 20px; color: black;">{{ $value[0]->user->name }}</h4>
+                                </a>
+
+                                @if ($value[0]->user != null)
+                                    <h7 style="font-size: 14px; font-weight: normal;">Wrote on {{ $value[0]->created_at->format('d M y . H:i') }}</h7><br>
+                                @else
+                                    <h4>Posted on {{ $value[0]->created_at }}-[Deleted User]</h4>
+                                @endif
+                            </div>
+                        </div>
+                        <hr style="2px solid">
+
                         <a href="/question/view/{{ $value[0]->id }}">
+                            <h3 style="color: black;">{{ $value[0]->title }}</h3>
+                            @if ($question->replies->count() > 0)
+                                <p style="color: black;">{{ $value[0]->replies->first()->body }}</p>
+                            @else
+                                continue;
+                            @endif
+                        </a>
+
+                        <div>
+                            <h5>{{ $value[0]->upvotes }} upvotes | {{ $value[0]->replies->count() }} replies</h5>
+                            <br>
+                        </div>
+
+                        {{-- ================================================ --}}
+                        {{-- <a href="/question/view/{{ $value[0]->id }}">
                             <h3>{{ $value[0]->title }}</h3>
                             @if ($question->replies->count() > 0)
                                 <p>{{ $value[0]->replies->first()->body }}</p>
@@ -137,9 +220,9 @@
                             @endif
                         </a>
 
-                        <h5>Asked by <a href="/user/profile/{{ $value[0]->user->id }}">{{ $value[0]->user->name }}</a> | {{ $value[0]->upvotes }} upvotes | {{ count($value) }} new replies</h5>
-
-                        <br>
+                        <h5>Asked byyy <a href="/user/profile/{{ $value[0]->user->id }}">{{ $value[0]->user->name }}</a> | {{ $value[0]->upvotes }} upvotes | {{ count($value) }} new replies</h5> --}}
+{{--
+                        <br> --}}
                     </div>
                 </div>
             @endforeach
@@ -153,7 +236,52 @@
             @foreach ($newestQuestions as $key => $value)
                 <div class="card mb-4">
                     <div class="card-body text">
+                        {{-- ===================================================== --}}
+
+                        <div  style="display: flex; align-items: center;">
+
+                            @if (!empty($value->user->image_url) && $value->user->image_url !== '')
+
+                                <a class="nav-link disabled" href="/user/profile/{{ $value->user->id }}">
+                                    <img src="/storage/uploads/{{ $value->user->image_url }}" alt="Profile Image" style="max-width: 60px; border-radius: 50%; margin-right: 10px" >
+                                </a>
+
+                            @else
+                                {{-- Gunakan foto default jika foto profil tidak ada --}}
+                                <img src="/storage/defaults/default-profile.jpg" alt="Default Image" style="max-width: 70px; border-radius: 50%; margin-right: 10px"><br><br>
+                            @endif
+
+
+                            <div>
+                                <a href="/user/profile/{{ $value->user->id }}">
+                                    <h4 style="text-transform: capitalize; margin-bottom: 0; font-size: 20px; color: black;">{{ $value->user->name }}</h4>
+                                </a>
+
+                                @if ($value->user != null)
+                                    <h7 style="font-size: 14px; font-weight: normal;">Wrote on {{ $value->created_at->format('d M y . H:i') }}</h7><br>
+                                @else
+                                    <h4>Posted on {{ $value->created_at }}-[Deleted User]</h4>
+                                @endif
+                            </div>
+                        </div>
+                        <hr style="2px solid">
+
                         <a href="/question/view/{{ $value->id }}">
+                            <h3 style="color: black;">{{ $value->title }}</h3>
+                            @if ($question->replies->count() > 0)
+                                <p style="color: black;">{{ $value->replies->first()->body }}</p>
+                            @else
+                                continue;
+                            @endif
+                        </a>
+
+                        <div>
+                            <h5>{{ $value->upvotes }} upvotes | {{ $value->replies->count() }} replies</h5>
+                            <br>
+                        </div>
+
+                        {{-- ===================================================== --}}
+                        {{-- <a href="/question/view/{{ $value->id }}">
                             <h3>{{ $value->title }}</h3>
                             @if ($question->replies->count() > 0)
                                 <p>{{ $value->replies->first()->body }}</p>
@@ -164,7 +292,7 @@
 
                         <h5>Asked by <a href="/user/profile/{{ $value->user->id }}">{{ $value->user->name }}</a> | {{ $value->upvotes }} upvotes | {{ $value->replies->count() }} replies</h5>
 
-                        <br>
+                        <br> --}}
                     </div>
                 </div>
 
@@ -238,6 +366,17 @@
 
 
     <script>
+        // Tanggal dan waktu dari PHP Blade
+        var dateTimeString = "{{ $question->created_at }}";
+        var dateTime = new Date(dateTimeString);
+
+        // Mengonversi format tanggal
+        var optionsDate = { day: '2-digit', month: 'short', year: '2-digit' };
+        var formattedDate = dateTime.toLocaleDateString('en-US', optionsDate); // '28 Nov 23'
+
+        // Menyusun hasil
+        var result = formattedDate;
+
         function filterSelection(filterName) {
   // Get all filterDiv elements
         const filterDivs = document.querySelectorAll('.filterDiv');
@@ -261,6 +400,12 @@
         const selectedButton = document.querySelector('.btn_filter[onclick="filterSelection(\'' + filterName + '\')"]');
         selectedButton.classList.add('active');
         }
+
+
+
+        // Menampilkan hasil di console atau di HTML sesuai kebutuhan Anda
+        // console.log(result);
+
     </script>
 
 </body>
