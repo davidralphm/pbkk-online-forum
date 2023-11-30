@@ -1,8 +1,7 @@
 @import url("//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
 /* membuat agar selain navbar berada tidak tertutup navbar */
-body {
-    overflow-x: hidden;
-    padding-top: 40px;
+body{
+    padding-top: 60px;
 }
 
 /* membuat agar navbar freeze di atas */
@@ -10,7 +9,7 @@ body {
     position: fixed;
     width: 100%;
     top: 0;
-    z-index: 1000;
+    z-index: 1;
 }
 
 .navbar-icon-top .navbar-nav .nav-link > .fa {
@@ -126,6 +125,7 @@ body {
     top: -7px;
   }
 }
+
 /* membuat agar body memiliki lebar yang sama dengan navbar secara otomatis*/
 
 

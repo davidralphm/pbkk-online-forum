@@ -234,20 +234,21 @@
                 {{-- start edit account --}}
                 <div class="card mb-4">
                     <div class="card-body">
-                        <h2>Edit Account</h2>
+                        <h2 style="margin-bottom: 20px">Edit Account</h2>
 
                         <form action="/user/editAccount" method="post" enctype="multipart/form-data">
                             {{ csrf_field() }}
-
+                            <h6 style="font-size: 14px; font-weight: normal;">Name</h6>
                             <input type="text" name="name" id="name" placeholder="Your Name"
-                                @if (old('name'))
-                                    value="{{ old('name') }}"
-                                @else
-                                    value="{{ $user->name }}"
-                                @endif
-                            class="input_box"><br><br>
+                            @if (old('name'))
+                            value="{{ old('name') }}"
+                            @else
+                            value="{{ $user->name }}"
+                            @endif
+                            class="input_box" style="width: 100%"><br><br>
 
-                            <textarea name="about" id="about" cols="30" rows="10" placeholder="About">@if (old('about')){{ old('about') }}@else{{ $user->about }}@endif</textarea><br><br>
+                            <h6 style="font-size: 14px; font-weight: normal;">About me</h6>
+                            <textarea name="about" id="about" cols="30" rows="10" placeholder="About" style="border-radius: 30px; padding:20px; margin-bottom: 10px; width: 100%">@if (old('about')){{ old('about') }}@else{{ $user->about }}@endif</textarea><br><br>
 
                             <label for="image" class="custom-file-upload">
                                 <span>Choose profile picture</span>
@@ -265,14 +266,14 @@
                 <div class="col-md-4">
                     <div class="card mb-4">
                         <div class="card-body">
-                            <h2>Change Password</h2>
+                            <h2 style="margin-bottom: 20px">Change Password</h2>
 
                             <form action="/user/changePassword" method="post">
                                 {{ csrf_field() }}
 
-                                <input type="password" name="password" id="password" placeholder="Current password" class="input_box"><br><br>
-                                <input type="password" name="new_password" id="new_password" placeholder="New password" class="input_box"><br><br>
-                                <input type="password" name="new_password_confirmation" id="new_password_confirmation" placeholder="Confirm new password" class="input_box"><br><br>
+                                <input type="password" name="password" id="password" placeholder="Current password" class="input_box" style="width: 100%;"><br><br>
+                                <input type="password" name="new_password" id="new_password" placeholder="New password" class="input_box" style="width: 100%"><br><br>
+                                <input type="password" name="new_password_confirmation" id="new_password_confirmation" placeholder="Confirm new password" class="input_box" style="width: 100%"><br><br>
 
                                 <input type="submit" value="Change Password" class="btn btn-outline-info">
                             </form><hr>
@@ -287,11 +288,11 @@
                 <div class="col-md-4">
                     <div class="card mb-4">
                         <div class="card-body">
-                            <h2>Delete Account</h2>
+                            <h2 style="margin-bottom: 20px">Delete Account</h2>
                             <form action="/user/deleteAccount" method="post">
                                 {{ csrf_field() }}
 
-                                <input type="password" name="password" id="password" placeholder="Enter password" class="input_box"><br><br>
+                                <input type="password" name="password" id="password" placeholder="Enter password" class="input_box" style="width: 100%;"><br><br>
 
                                 <input type="submit" value="Delete Account" class="btn btn-outline-warning">
                             </form><hr>

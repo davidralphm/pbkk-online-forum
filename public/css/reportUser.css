@@ -1,8 +1,8 @@
 @import url("//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
 /* membuat agar selain navbar berada tidak tertutup navbar */
 body {
-    overflow-x: hidden;
-    padding-top: 40px;
+    /* overflow-x: hidden; */
+    padding-top: 60px;
 }
 
 /* membuat agar navbar freeze di atas */
@@ -130,3 +130,17 @@ body {
 
 
 
+.bjir{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.woy{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}

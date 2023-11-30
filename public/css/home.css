@@ -2,7 +2,11 @@
 /* membuat agar selain navbar berada tidak tertutup navbar */
 body{
     padding-top: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
+
 
 /* membuat agar navbar freeze di atas */
 .navbar{
@@ -130,6 +134,9 @@ body{
 
 .container {
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
 .filterDiv {
@@ -180,3 +187,4 @@ body{
 .text h3 {
     text-transform: capitalize;
 }
+
