@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Homepage route
-// Route::get('/', ['\App\Http\Controllers\QuestionController', 'index'])->name('homepage');
+Route::get('/', ['\App\Http\Controllers\QuestionController', 'root'])->name('landingpage');
 
 // Searchpage route
 Route::get('/search', ['\App\Http\Controllers\QuestionController', 'search'])->name('searchpage');

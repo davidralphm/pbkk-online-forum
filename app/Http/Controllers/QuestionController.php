@@ -16,6 +16,12 @@ use Illuminate\Support\Facades\Session;
 
 class QuestionController extends Controller
 {
+
+    public function root() {
+        return view('landingpage');
+    }
+
+
     // Return home page
     public function index() {
         // Yesterday time
