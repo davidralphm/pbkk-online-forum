@@ -27,7 +27,7 @@
               <div class="container">
                 <div class="info">
                   <h1>Online Parenting Forum for Asking and Sharing</h1>
-                  <p>Together, we create a warm and inclusive environment for sharing the joys and challenges of parenthood.iunt quidem iste, Repellendus odit nihil</p>
+                  <p>Together, we create a warm and inclusive environment for sharing the joys and challenges of parenthood.</p>
                   {{-- <a href="/login" class="btn btn-outline-primary" style="margin-top: 20px">Login</a> --}}
                 </div>
                 <div class="image">
