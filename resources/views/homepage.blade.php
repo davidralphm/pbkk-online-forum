@@ -77,12 +77,12 @@
                                     @if (!empty($question->user->image_url) && $question->user->image_url !== '')
 
                                         <a class="nav-link disabled" href="/user/profile/{{ $question->user->id }}">
-                                            <img src="/storage/uploads/{{ $question->user->image_url }}" alt="Profile Image" style="max-width: 60px; border-radius: 50%; margin-right: 10px" >
+                                            <img src="/storage/uploads/{{ $question->user->image_url }}" alt="Profile Image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; margin-right: 10px" >
                                         </a>
 
                                     @else
                                         {{-- Gunakan foto default jika foto profil tidak ada --}}
-                                        <img src="/storage/defaults/default-profile.jpg" alt="Default Image" style="max-width: 70px; border-radius: 50%; margin-right: 10px"><br><br>
+                                        <img src="/storage/defaults/default-profile.jpg" alt="Default Image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; margin-right: 10px"><br><br>
                                     @endif
 
 

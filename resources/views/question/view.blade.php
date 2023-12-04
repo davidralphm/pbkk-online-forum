@@ -95,7 +95,7 @@
                 <hr style="border: 0.5px solid #000;">
 
                 <h1 style="text-transform: capitalize;">{{ $question->title }}</h1>
-                <h4>{{ $replies->first()->body }}</h4>
+                <h4 style="font-weight: normal;">{{ $replies->first()->body }}</h4>
 
                 @if ($question->locked == true)
                     <em>This question has been locked</em>
