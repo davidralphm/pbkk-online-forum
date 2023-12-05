@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Question;
 use App\Models\Reply;
 use App\Events\UserLoggedIn;
+use App\Jobs\sendEmailWelcome;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
@@ -82,6 +83,8 @@ class UserController extends Controller
         $user->role = 'user';
 
         $user->save();
+
+        sendEmailWelcome::dispatch($user);
 
         Session::flash('message-success', 'Registrasi berhasil');
         return redirect('/register');

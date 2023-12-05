@@ -33,15 +33,11 @@ Route::post('/login', ['\App\Http\Controllers\UserController', 'loginPost']);
 // Logout route
 Route::get('/logout', ['\App\Http\Controllers\UserController', 'logout']);
 
-Route::get('/check-cache', function () {
-    // Menampilkan semua item di cache
-    // Cache::get('unreadCount_userId');
-
-    $unreadCount = Cache::get('unreadCount_userId');
-
-    // Menampilkan nilai ke dalam halaman
-    return "Nilai dari cache 'unreadCount_userId': $unreadCount";
-});
+Route::get('/email-test', function(){
+    $details['email'] = 'nama@mailtrap.io';
+    dispatch(new App\Jobs\sendEmailWelcome($details));
+    dd('done');
+    });
 
 
 // User routes
