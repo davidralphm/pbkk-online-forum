@@ -46,6 +46,15 @@
               </a>
             </li>
 
+              <li class="nav-item">
+                <a class="nav-link" href="/question/notifications">
+                  <i class="fa fa-bell">
+                      <span class="badge badge-danger">{{ $unreadCount }}</span>
+                  </i>
+                </a>
+              </li>
+
+
             <li class="nav-item">
                 <a class="nav-link disabled" href="/question/create">
                     <button type="button" class="btn btn-outline-success btn-sm">Create Post</button>
@@ -77,11 +86,13 @@
           </ul>
 
 
-            <form action="/search" method="get" class="form-inline my-2 my-lg-0">
-                <input type="text" name="search" id="search" placeholder="Search questions" class="form-control mr-sm-2">
+            <form action="/search" method="get" class="form-inline my-2 my-lg-0 mr-3">
+                <input type="text" name="search" id="search" placeholder="Search questions" class="form-control mr-sm-2" style="margin-right: 40px;">
 
                 <input type="submit" value="Search" class="btn btn-outline-success my-2 my-sm-0">
             </form>
+
+            <a href="/logout" class="btn btn-danger form-inline my-2 my-lg-0">Logout</a>
 
           {{-- <form class="form-inline my-2 my-lg-0">
             <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">

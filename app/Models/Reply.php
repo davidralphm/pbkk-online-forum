@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\NewReplyNotification;
 
 class Reply extends Model
 {
@@ -19,6 +20,11 @@ class Reply extends Model
     public function user() : BelongsTo {
         return $this->belongsTo(User::class);
     }
+
+    // public function sendNewReplyNotification()
+    // {
+    //     $this->question->user->notify(new NewReplyNotification($this));
+    // }
 
     // Return question yang direply
     public function question() : BelongsTo {

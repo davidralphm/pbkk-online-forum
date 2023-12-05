@@ -17,6 +17,30 @@ use Illuminate\Support\Facades\Session;
 class QuestionController extends Controller
 {
 
+    // private $unreadCount;
+
+    // public function __construct()
+    // {
+    //     // Hitung $unreadCount saat objek kontroler dibuat
+    //     $this->unreadCount = $this->calculateUnreadCount();
+    // }
+
+    // private function calculateUnreadCount()
+    // {
+    //     $userId = Auth::id();
+
+    //     // Mengambil semua pertanyaan dari user yang telah login
+    //     $questions = Question::where('user_id', $userId)->get();
+
+    //     // Mengumpulkan ID pertanyaan beserta created_at
+    //     $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+    //     return Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+    //         ->where('is_read', 0)
+    //         ->count();
+    // }
+
+
     public function root() {
         return view('landingpage');
     }
@@ -92,6 +116,19 @@ class QuestionController extends Controller
         ->get()
         ->take(20);
 
+        $userId = Auth::id();
+
+        // Mengambil semua pertanyaan dari user yang telah login
+        $questions = Question::where('user_id', $userId)->get();
+
+        // Mengumpulkan ID pertanyaan beserta created_at
+        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+        $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
+            ->where('is_read', 0)
+            ->count();
+
         return view(
             'homepage',
             [
@@ -102,6 +139,7 @@ class QuestionController extends Controller
                 'mostUpvotedUsers' => $mostUpvotedUsers,
                 'mostActiveUsers' => $mostActiveUsers,
                 'newestUsers' => $newestUsers,
+                'unreadCount' => $unreadCount,
             ]
         );
     }
@@ -113,12 +151,37 @@ class QuestionController extends Controller
         $questions = Question::where('title', 'LIKE', '%' . $request->search . '%')
         ->simplePaginate(20);
 
-        return view('searchpage', ['questions' => $questions]);
+        $userId = Auth::id();
+
+        // Mengambil semua pertanyaan dari user yang telah login
+        $questions = Question::where('user_id', $userId)->get();
+
+        // Mengumpulkan ID pertanyaan beserta created_at
+        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+        $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
+            ->where('is_read', 0)
+            ->count();
+
+        return view('searchpage', ['questions' => $questions, 'unreadCount' => $unreadCount]);
     }
 
     // Show create question page
     public function create() {
-        return view('question.create');
+        $userId = Auth::id();
+
+        // Mengambil semua pertanyaan dari user yang telah login
+        $questions = Question::where('user_id', $userId)->get();
+
+        // Mengumpulkan ID pertanyaan beserta created_at
+        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+        $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
+            ->where('is_read', 0)
+            ->count();
+        return view('question.create', ['unreadCount' => $unreadCount]);
     }
 
     // Store new question
@@ -166,9 +229,22 @@ class QuestionController extends Controller
 
         $replies = $question->replies()->simplePaginate(20);
 
+        $userId = Auth::id();
+
+        // Mengambil semua pertanyaan dari user yang telah login
+        $questions = Question::where('user_id', $userId)->get();
+
+        // Mengumpulkan ID pertanyaan beserta created_at
+        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+        $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
+            ->where('is_read', 0)
+            ->count();
 
 
-        return view('question.view', ['question' => $question, 'replies' => $replies]);
+
+        return view('question.view', ['question' => $question, 'replies' => $replies, 'unreadCount' => $unreadCount]);
     }
 
     // Reply to a question
@@ -196,6 +272,7 @@ class QuestionController extends Controller
         $reply->body = $request->body;
 
         $reply->save();
+        // $reply->sendNewReplyNotification();
 
         Session::flash('message-success', 'Reply posted successfully!');
         return back();
@@ -214,7 +291,20 @@ class QuestionController extends Controller
             abort(401);
         }
 
-        return view('question.edit', ['question' => $question]);
+        $userId = Auth::id();
+
+        // Mengambil semua pertanyaan dari user yang telah login
+        $questions = Question::where('user_id', $userId)->get();
+
+        // Mengumpulkan ID pertanyaan beserta created_at
+        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+        $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
+            ->where('is_read', 0)
+            ->count();
+
+        return view('question.edit', ['question' => $question, 'unreadCount' => $unreadCount]);
     }
 
     // Edit question post
@@ -286,7 +376,20 @@ class QuestionController extends Controller
     public function report(int $id) {
         $question = Question::findOrFail($id);
 
-        return view('report.question', ['question' => $question]);
+        $userId = Auth::id();
+
+        // Mengambil semua pertanyaan dari user yang telah login
+        $questions = Question::where('user_id', $userId)->get();
+
+        // Mengumpulkan ID pertanyaan beserta created_at
+        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+        $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
+            ->where('is_read', 0)
+            ->count();
+
+        return view('report.question', ['question' => $question, 'unreadCount' => $unreadCount]);
     }
 
     // Report question post
@@ -352,7 +455,20 @@ class QuestionController extends Controller
             ]
         );
 
-        return view('question.reportedList', ['reported' => $reported]);
+        $userId = Auth::id();
+
+        // Mengambil semua pertanyaan dari user yang telah login
+        $questions = Question::where('user_id', $userId)->get();
+
+        // Mengumpulkan ID pertanyaan beserta created_at
+        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+        $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
+            ->where('is_read', 0)
+            ->count();
+
+        return view('question.reportedList', ['reported' => $reported, 'unreadCount' => $unreadCount]);
     }
 
     // Function to show all the reports for a reported question
@@ -361,6 +477,82 @@ class QuestionController extends Controller
 
         $reports = $question->reports()->simplePaginate(20);
 
-        return view('question.reportedListView', ['question' => $question, 'reports' => $reports]);
+        $userId = Auth::id();
+
+        // Mengambil semua pertanyaan dari user yang telah login
+        $questions = Question::where('user_id', $userId)->get();
+
+        // Mengumpulkan ID pertanyaan beserta created_at
+        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+        $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
+            ->where('is_read', 0)
+            ->count();
+
+        return view('question.reportedListView', ['question' => $question, 'reports' => $reports, 'unreadCount' => $unreadCount]);
     }
+
+
+    public function viewByNotif(int $id) {
+        $question = Question::findOrFail($id);
+
+        // if (empty($question)) {
+        //     return back()->withErrors('Question not found!');
+        // }
+
+        $replies = $question->replies()->simplePaginate(20);
+
+        foreach ($replies as $reply) {
+            $reply->is_read = 1;
+            $reply->save();
+        }
+
+        $userId = Auth::id();
+
+        // Mengambil semua pertanyaan dari user yang telah login
+        $questions = Question::where('user_id', $userId)->get();
+
+        // Mengumpulkan ID pertanyaan beserta created_at
+        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+        $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
+            ->where('is_read', 0)
+            ->count();
+
+        return view('question.view', ['question' => $question, 'replies' => $replies, 'unreadCount' => $unreadCount]);
+    }
+
+    public function showNotif(){
+        // Mendapatkan ID user yang telah login
+        $userId = Auth::id();
+
+        // Mengambil semua pertanyaan dari user yang telah login
+        $questions = Question::where('user_id', $userId)->get();
+
+        // Mengumpulkan ID pertanyaan beserta created_at
+        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+        // $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+        //             ->where('is_read', 0)
+        //             ->count();
+
+        // Mengambil semua balasan (replies) yang terkait dengan pertanyaan-pertanyaan tersebut,
+        // dengan syarat created_at pada reply tidak sama dengan created_at pada question terkaitnya
+        $replies = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
+            ->orderBy('created_at', 'desc')
+            ->simplePaginate(20);
+
+
+        $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
+            ->where('is_read', 0)
+            ->count();
+
+        return view('question.notif', ['questions' => $questions, 'replies' => $replies, 'unreadCount' => $unreadCount]);
+    }
+
+
 }

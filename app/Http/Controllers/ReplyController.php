@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Reply;
 use App\Models\ReportedReply;
 use App\Models\Vote;
+use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +15,29 @@ use Illuminate\Support\Facades\Session;
 class ReplyController extends Controller
 {
     // Return reply edit view
+    // private $unreadCount;
+
+    // public function __construct()
+    // {
+    //     // Hitung $unreadCount saat objek kontroler dibuat
+    //     $this->updateUnreadCount();
+    // }
+
+    // private function updateUnreadCount()
+    // {
+    //     $userId = Auth::id();
+
+    //     // Mengambil semua pertanyaan dari user yang telah login
+    //     $questions = Question::where('user_id', $userId)->get();
+
+    //     // Mengumpulkan ID pertanyaan beserta created_at
+    //     $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+    //     $this->unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+    //         ->where('is_read', 0)
+    //         ->count();
+    // }
+
     public function edit(int $id) {
         $reply = Reply::findOrFail($id);
 
@@ -26,7 +50,20 @@ class ReplyController extends Controller
             abort(401);
         }
 
-        return view('reply.edit', ['reply' => $reply]);
+        $userId = Auth::id();
+
+        // Mengambil semua pertanyaan dari user yang telah login
+        $questions = Question::where('user_id', $userId)->get();
+
+        // Mengumpulkan ID pertanyaan beserta created_at
+        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+        $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
+            ->where('is_read', 0)
+            ->count();
+
+        return view('reply.edit', ['reply' => $reply, 'unreadCount' => $unreadCount]);
     }
 
     // Reply edit post
@@ -74,7 +111,7 @@ class ReplyController extends Controller
         Session::flash('message-success', 'Reply deleted successfully!');
         return back();
     }
-    
+
     // Undelete reply function
     public function undelete(Request $request, int $id) {
         $reply = Reply::findOrFail($id);
@@ -177,7 +214,7 @@ class ReplyController extends Controller
         }
 
         // Create a new vote for this reply
-        
+
         $vote->type = 'downvote';
         $vote->save();
 
@@ -238,7 +275,20 @@ class ReplyController extends Controller
     public function report(int $id) {
         $reply = Reply::findOrFail($id);
 
-        return view('report.reply', ['reply' => $reply]);
+        $userId = Auth::id();
+
+        // Mengambil semua pertanyaan dari user yang telah login
+        $questions = Question::where('user_id', $userId)->get();
+
+        // Mengumpulkan ID pertanyaan beserta created_at
+        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+        $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
+            ->where('is_read', 0)
+            ->count();
+
+        return view('report.reply', ['reply' => $reply, 'unreadCount' => $unreadCount]);
     }
 
     // Report reply post
@@ -303,7 +353,20 @@ class ReplyController extends Controller
             ]
         );
 
-        return view('reply.reportedList', ['reported' => $reported]);
+        $userId = Auth::id();
+
+        // Mengambil semua pertanyaan dari user yang telah login
+        $questions = Question::where('user_id', $userId)->get();
+
+        // Mengumpulkan ID pertanyaan beserta created_at
+        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+        $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
+            ->where('is_read', 0)
+            ->count();
+
+        return view('reply.reportedList', ['reported' => $reported, 'unreadCount' => $unreadCount]);
     }
 
     // Function to show all the reports for a reported reply
@@ -312,6 +375,18 @@ class ReplyController extends Controller
 
         $reports = $reply->reports()->simplePaginate(20);
 
-        return view('reply.reportedListView', ['reply' => $reply, 'reports' => $reports]);
+        $userId = Auth::id();
+
+        // Mengambil semua pertanyaan dari user yang telah login
+        $questions = Question::where('user_id', $userId)->get();
+
+        // Mengumpulkan ID pertanyaan beserta created_at
+        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+        $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->where('is_read', 0)
+            ->count();
+
+        return view('reply.reportedListView', ['reply' => $reply, 'reports' => $reports, 'unreadCount' => $unreadCount]);
     }
 }

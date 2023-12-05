@@ -6,6 +6,9 @@ use App\Models\ReportedQuestion;
 use App\Models\ReportedReply;
 use App\Models\ReportedUser;
 use App\Models\User;
+use App\Models\Question;
+use App\Models\Reply;
+use App\Events\UserLoggedIn;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +19,29 @@ use function PHPUnit\Framework\isEmpty;
 
 class UserController extends Controller
 {
+
+    // private $unreadCount;
+
+    // public function __construct()
+    // {
+    //     // Hitung $unreadCount saat objek kontroler dibuat
+    //     $this->updateUnreadCount();
+    // }
+
+    // private function updateUnreadCount()
+    // {
+    //     $userId = Auth::id();
+
+    //     // Mengambil semua pertanyaan dari user yang telah login
+    //     $questions = Question::where('user_id', $userId)->get();
+
+    //     // Mengumpulkan ID pertanyaan beserta created_at
+    //     $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+    //     $this->unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+    //         ->where('is_read', 0)
+    //         ->count();
+    // }
     // Return template register (GET method)
     public function register() {
         return view('user.register');
@@ -85,6 +111,8 @@ class UserController extends Controller
         if (Auth::attempt($validated)) {
             $user = User::find(Auth::id());
 
+
+
             if ($user->banned == true) {
                 // Check if user is already unbanned
                 if ($user->banned_until > now()) {
@@ -100,7 +128,12 @@ class UserController extends Controller
                 }
             }
 
+
+
             $request->session()->regenerate();
+            // event(new UserLoggedIn($user->id));
+
+            // $this->updateUnreadCount();
 
             // return redirect()->intended('/user/dashboard');
             return redirect()->intended('/user/home');
@@ -127,8 +160,20 @@ class UserController extends Controller
         // if ($user == null) {
         //     return redirect('/user/dashboard')->withErrors('User not found!');
         // }
+        $userId = Auth::id();
 
-        return view('user.profile', ['user' => $user]);
+        // Mengambil semua pertanyaan dari user yang telah login
+        $questions = Question::where('user_id', $userId)->get();
+
+        // Mengumpulkan ID pertanyaan beserta created_at
+        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+        $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
+            ->where('is_read', 0)
+            ->count();
+
+        return view('user.profile', ['user' => $user,'unreadCount' => $unreadCount]);
     }
 
     // // view own profile
@@ -162,6 +207,19 @@ class UserController extends Controller
             ->take(10);
         }
 
+        $userId = Auth::id();
+
+        // Mengambil semua pertanyaan dari user yang telah login
+        $questions = Question::where('user_id', $userId)->get();
+
+        // Mengumpulkan ID pertanyaan beserta created_at
+        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+        $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
+            ->where('is_read', 0)
+            ->count();
+
         return view(
             'user.dashboard',
             [
@@ -169,6 +227,7 @@ class UserController extends Controller
                 'reportedQuestions' => $reportedQuestions,
                 'reportedReplies' => $reportedReplies,
                 'reportedUsers' => $reportedUsers,
+                'unreadCount' => $unreadCount
             ]
         );
     }
@@ -289,7 +348,20 @@ class UserController extends Controller
     public function report(int $id) {
         $user = User::findOrFail($id);
 
-        return view('report.user', ['user' => $user]);
+        $userId = Auth::id();
+
+        // Mengambil semua pertanyaan dari user yang telah login
+        $questions = Question::where('user_id', $userId)->get();
+
+        // Mengumpulkan ID pertanyaan beserta created_at
+        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+        $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
+            ->where('is_read', 0)
+            ->count();
+
+        return view('report.user', ['user' => $user,'unreadCount' => $unreadCount]);
     }
 
     // Report user post
@@ -354,7 +426,20 @@ class UserController extends Controller
             ]
         );
 
-        return view('user.reportedList', ['reported' => $reported]);
+        $userId = Auth::id();
+
+        // Mengambil semua pertanyaan dari user yang telah login
+        $questions = Question::where('user_id', $userId)->get();
+
+        // Mengumpulkan ID pertanyaan beserta created_at
+        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+        $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
+            ->where('is_read', 0)
+            ->count();
+
+        return view('user.reportedList', ['reported' => $reported,'unreadCount' => $unreadCount]);
     }
 
     // Function to show all the reports for a reported user
@@ -363,7 +448,20 @@ class UserController extends Controller
 
         $reports = $user->reports()->simplePaginate(20);
 
-        return view('user.reportedListView', ['user' => $user, 'reports' => $reports]);
+        $userId = Auth::id();
+
+        // Mengambil semua pertanyaan dari user yang telah login
+        $questions = Question::where('user_id', $userId)->get();
+
+        // Mengumpulkan ID pertanyaan beserta created_at
+        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+        $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
+            ->where('is_read', 0)
+            ->count();
+
+        return view('user.reportedListView', ['user' => $user, 'reports' => $reports,'unreadCount' => $unreadCount]);
     }
 
     // Function to ban a user
@@ -373,7 +471,20 @@ class UserController extends Controller
         // Authorization
         Gate::authorize('is-admin');
 
-        return view('user.ban', ['user' => $user]);
+        $userId = Auth::id();
+
+        // Mengambil semua pertanyaan dari user yang telah login
+        $questions = Question::where('user_id', $userId)->get();
+
+        // Mengumpulkan ID pertanyaan beserta created_at
+        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+
+        $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
+            ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
+            ->where('is_read', 0)
+            ->count();
+
+        return view('user.ban', ['user' => $user,'unreadCount' => $unreadCount]);
     }
 
     // Function to ban a user

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Cache;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+ Route::get('/notif/{question}', ['\App\Http\Controllers\QuestionController', 'showNotif'])->name('notif')->middleware('auth');
 
 // Homepage route
 Route::get('/', ['\App\Http\Controllers\QuestionController', 'root'])->name('landingpage');
@@ -29,6 +32,17 @@ Route::post('/login', ['\App\Http\Controllers\UserController', 'loginPost']);
 
 // Logout route
 Route::get('/logout', ['\App\Http\Controllers\UserController', 'logout']);
+
+Route::get('/check-cache', function () {
+    // Menampilkan semua item di cache
+    // Cache::get('unreadCount_userId');
+
+    $unreadCount = Cache::get('unreadCount_userId');
+
+    // Menampilkan nilai ke dalam halaman
+    return "Nilai dari cache 'unreadCount_userId': $unreadCount";
+});
+
 
 // User routes
 Route::prefix('/user')->name('user.')->group(
@@ -96,6 +110,14 @@ Route::prefix('/question')->name('question.')->group(
 
         // Reply to question
         Route::post('/reply/{id}', ['\App\Http\Controllers\QuestionController', 'reply'])->middleware('auth');
+
+
+        // ============================================================
+        Route::get('/notifications', ['\App\Http\Controllers\QuestionController', 'showNotif'])->name('notification.show');
+
+        Route::get('/viewByNotif/{id}', ['\App\Http\Controllers\QuestionController', 'viewByNotif']);
+
+        // ============================================================
 
         // Edit question
         Route::get('/edit/{id}', ['\App\Http\Controllers\QuestionController', 'edit'])->middleware('auth');
