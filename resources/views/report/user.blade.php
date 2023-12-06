@@ -47,14 +47,6 @@
               </li>
 
 
-              <li class="nav-item">
-                <a class="nav-link" href="/user/home">
-                  <i class="fa fa-bell">
-                    <span class="badge badge-danger">3</span>
-                  </i>
-                </a>
-              </li>
-
 
 
             <li class="nav-item">

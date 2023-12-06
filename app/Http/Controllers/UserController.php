@@ -84,7 +84,11 @@ class UserController extends Controller
 
         $user->save();
 
-        sendEmailWelcome::dispatch($user);
+        // sendEmailWelcome::dispatch($user);
+
+        $details['email'] = $user->email;
+
+        sendEmailWelcome::dispatch(($details));
 
         Session::flash('message-success', 'Registrasi berhasil');
         return redirect('/register');
@@ -194,7 +198,7 @@ class UserController extends Controller
         $reportedUsers = null;
 
         if (Auth::user()->role == 'admin') {
-            $reportedQuestions = ReportedQuestion::select('id', 'user_id', 'reported_id', 'reason')
+            $reportedQuestioWns = ReportedQuestion::select('id', 'user_id', 'reported_id', 'reason')
             ->get()
             ->groupBy('reported_id')
             ->take(10);

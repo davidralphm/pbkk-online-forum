@@ -109,6 +109,14 @@
 
                 @if ($question->locked == true)
                     <em>This question has been locked</em>
+                    @if ($question->user_id == Auth::id())
+                        <form action="/question/unlock/{{ $question->id }}" method="post">
+                            {{ csrf_field() }}
+
+                            <input type="submit" value="Unlock Question">
+                        </form>
+                    @endif
+
                 @else
                     @if ($question->user_id == Auth::id())
                         <form action="/question/lock/{{ $question->id }}" method="post">

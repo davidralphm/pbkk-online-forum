@@ -154,10 +154,10 @@ class QuestionController extends Controller
         $userId = Auth::id();
 
         // Mengambil semua pertanyaan dari user yang telah login
-        $questions = Question::where('user_id', $userId)->get();
+        $questions_notif = Question::where('user_id', $userId)->get();
 
         // Mengumpulkan ID pertanyaan beserta created_at
-        $questionIdsWithCreatedAt = $questions->pluck('created_at', 'id')->toArray();
+        $questionIdsWithCreatedAt = $questions_notif->pluck('created_at', 'id')->toArray();
 
         $unreadCount = Reply::whereIn('question_id', array_keys($questionIdsWithCreatedAt))
             ->whereNotIn('created_at', array_values($questionIdsWithCreatedAt))
