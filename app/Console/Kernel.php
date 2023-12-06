@@ -16,8 +16,10 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->call(function () {
             // Kode untuk menjalankan tugas yang dijadwalkan
-            DB::table('questions')->where('created_at', '<', now()->subDays(30))->delete();
-        })->dailyAt('02:00')->timezone('Asia/Jakarta');
+            DB::table('reported_questions')->where('created_at', '<', now()->subDays(30))->delete();
+            DB::table('reported_replies')->where('created_at', '<', now()->subDays(30))->delete();
+            DB::table('reported_users')->where('created_at', '<', now()->subDays(30))->delete();
+        })->dailyAt('00:00')->timezone('Asia/Jakarta');
     }
 
     /**
